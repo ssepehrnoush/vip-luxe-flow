@@ -2,7 +2,6 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 
 import appCss from "../styles.css?url";
 import VipIntroOverlay from "../components/VipIntroOverlay";
-import HighContrastToggle from "../components/HighContrastToggle";
 
 function NotFoundComponent() {
   return (
@@ -61,7 +60,7 @@ export const Route = createRootRoute({
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fa" dir="rtl">
+    <html lang="fa" dir="rtl" className="hc">
       <head>
         <HeadContent />
       </head>
@@ -78,7 +77,6 @@ function RootComponent() {
     <>
       <Outlet />
       <VipIntroOverlay />
-      <HighContrastToggle />
     </>
   );
 }
