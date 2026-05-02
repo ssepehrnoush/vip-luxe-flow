@@ -171,8 +171,8 @@ function SwipeCard({
               />
             </div>
             <div className="space-y-2">
-              <h3 className="text-2xl font-bold text-foreground">{benefit.title}</h3>
-              <p className="text-sm leading-7 text-muted-foreground px-2">
+              <h3 className="text-2xl font-bold" style={{ color: "oklch(0.22 0.015 60)" }}>{benefit.title}</h3>
+              <p className="text-sm leading-7 px-2" style={{ color: "oklch(0.38 0.015 65)" }}>
                 {benefit.subtitle}
               </p>
             </div>
@@ -194,7 +194,7 @@ function SwipeCard({
                 />
               ))}
             </div>
-            <p className="text-[11px] text-muted-foreground tracking-wider">
+            <p className="text-[11px] tracking-wider" style={{ color: "oklch(0.45 0.015 65)" }}>
               برای پذیرش، کارت را بکشید →  ←
             </p>
           </div>
