@@ -262,10 +262,10 @@ function VipLanding() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 * i + 0.3 }}
-                      whileHover={{ scale: 1.03, y: -4 }}
-                      whileTap={{ scale: 0.99 }}
-                      onClick={() => toggle(i)}
-                      className={`glass rounded-2xl p-5 text-right relative overflow-hidden group transition-all duration-500 ${
+                      whileHover={{ scale: 1.02, y: -3 }}
+                      onClick={() => { /* locked: benefits cannot be unchecked by the user */ }}
+                      aria-disabled
+                      className={`glass rounded-2xl p-5 text-right relative overflow-hidden group transition-all duration-500 cursor-default ${
                         isSel ? "ring-2 ring-[var(--gold)] shadow-[0_0_40px_oklch(0.82_0.14_88/0.4)]" : ""
                       }`}
                     >
