@@ -252,7 +252,7 @@ function VipLanding() {
               <img
                 src={logo}
                 alt="کلینیک لمون"
-                className="h-10 w-auto neon-logo"
+                className="h-10 w-auto"
               />
             </div>
             <p className="text-sm font-semibold tracking-[0.25em] text-foreground">
