@@ -462,41 +462,14 @@ function VipLanding() {
           )}
 
           {step === 4 && (
-            <motion.section
-              key="done"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6 }}
-              className="text-center py-10"
-            >
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
-                className="relative w-28 h-28 mx-auto mb-8"
-              >
-                <div className="absolute inset-0 rounded-full btn-gold animate-pulse" />
-                <div className="absolute inset-2 rounded-full bg-[var(--ivory)] flex items-center justify-center">
-                  <Check className="w-12 h-12 text-[var(--gold-deep)]" strokeWidth={3} />
-                </div>
-                <motion.div
-                  className="absolute -inset-4 rounded-full"
-                  style={{ boxShadow: "0 0 60px oklch(0.82 0.14 88 / 0.6)" }}
-                  animate={{ opacity: [0.4, 0.9, 0.4] }}
-                  transition={{ duration: 2.4, repeat: Infinity }}
-                />
-              </motion.div>
-              <h2 className="text-3xl sm:text-4xl font-black mb-4">
-                درخواست شما <span className="gold-text">ثبت شد</span>
-              </h2>
-              <p className="text-muted-foreground max-w-md mx-auto leading-relaxed">
-                در اولین فرصت جهت هماهنگی با شما تماس گرفته خواهد شد
-              </p>
-              <div className="glass rounded-2xl p-5 mt-8 inline-flex items-center gap-3">
-                <Crown className="w-5 h-5 text-[var(--gold-deep)]" />
-                <span className="text-sm">به خانواده VIP لمون خوش آمدید</span>
-              </div>
-            </motion.section>
+            <SuccessScreen
+              refCode={refCode}
+              phone={phone}
+              address={address}
+              preview={preview}
+              selected={selected}
+              quality={quality}
+            />
           )}
         </AnimatePresence>
 
