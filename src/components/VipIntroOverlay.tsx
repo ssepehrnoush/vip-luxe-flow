@@ -195,7 +195,7 @@ function SwipeCard({
               ))}
             </div>
             <p className="text-[11px] text-muted-foreground tracking-wider">
-              برای پذیرش، کارت را بکشید ←  →
+              برای پذیرش، کارت را بکشید →  ←
             </p>
           </div>
         </div>
