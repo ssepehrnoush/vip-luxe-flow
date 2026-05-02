@@ -9,6 +9,7 @@ import {
 import logo from "@/assets/lemon-logo-neon.webp";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,10 +22,46 @@ export const Route = createFileRoute("/")({
 });
 
 const benefits = [
-  { icon: Syringe,         title: "هدیه بوتاکس مصپورت", desc: "تکنیک چشم گربه‌ای، توسط پزشک متخصص" },
-  { icon: ScanFace,        title: "آنالیز تخصصی چهره", desc: "ارزیابی کامل پوستی و ارائه روتین مراقبتی" },
-  { icon: Crown,           title: "عضویت در گروه VIP",  desc: "دسترسی به آفرها و رویدادهای اختصاصی" },
-  { icon: MessageCircleHeart, title: "ارتباط مستقیم با پزشک", desc: "مشاوره خصوصی و پیگیری شخصی" },
+  {
+    icon: Syringe,
+    title: "هدیه بوتاکس مصپورت",
+    desc: "تکنیک چشم گربه‌ای، توسط پزشک متخصص",
+    details: [
+      "تمام اعضای کلاب VIP لمون، میهمان همیشگی ما در خدمات بوتاکس هستند — کاملاً رایگان و بدون محدودیت زمانی.",
+      "برند مورد استفاده «مصپورت (Masport)» است؛ یکی از معتبرترین برندهای جهانی با ماندگاری بالا و نتیجهٔ طبیعی.",
+      "نواحی تحت پوشش: خط اخم، بالای ابرو (لیفت ابرو) و چین‌های پنجه‌کلاغی — متناسب با آناتومی چهرهٔ شما توسط پزشک طراحی می‌شود.",
+    ],
+  },
+  {
+    icon: ScanFace,
+    title: "آنالیز تخصصی چهره",
+    desc: "ارزیابی کامل پوستی و ارائه روتین مراقبتی",
+    details: [
+      "آنالیز چهره مستقیماً توسط پزشک متخصص انجام می‌شود — بدون واسطه و بدون دستگاه‌های عمومی.",
+      "وضعیت پوست، تناسب اجزا، خطوط بیانی و نقاط قابل بهبود به‌صورت دقیق بررسی می‌شود.",
+      "در پایان، یک Home Care اختصاصی برای نوع پوست شما تجویز می‌شود؛ شامل ترتیب محصولات، روتین صبح و شب و توصیه‌های فصلی.",
+    ],
+  },
+  {
+    icon: Crown,
+    title: "عضویت در گروه VIP",
+    desc: "دسترسی به آفرها و رویدادهای اختصاصی",
+    details: [
+      "ورود به جمع محدودی از مهمانان دائمی کلینیک لمون با اولویت نوبت‌دهی و دسترسی زودهنگام به خدمات جدید.",
+      "تخفیف‌های اختصاصی روی سایر خدمات کلینیک، پکیج‌های فصلی و رویدادهای بستهٔ اعضا.",
+      "هدایا و خدمات سورپرایز در مناسبت‌های ویژه — تجربه‌ای فراتر از یک کلینیک معمولی.",
+    ],
+  },
+  {
+    icon: MessageCircleHeart,
+    title: "ارتباط مستقیم با پزشک",
+    desc: "مشاوره خصوصی و پیگیری شخصی",
+    details: [
+      "یک خط ارتباطی شخصی و مستقیم با پزشک معالج، بدون واسطهٔ منشی یا اپراتور.",
+      "پیگیری روند درمان، پاسخ به سؤالات بعد از خدمات و راهنمایی در شرایط خاص.",
+      "احساس امنیت و آرامش خاطر در هر مرحله — انگار پزشک شخصی خودتان همیشه در دسترس است.",
+    ],
+  },
 ];
 
 const steps = ["مزایا", "تماس", "آدرس", "تصویر", "تایید"];
@@ -34,6 +71,7 @@ function VipLanding() {
   const [step, setStep] = useState(0);
   const [selected, setSelected] = useState<number[]>([]);
   const [justChecked, setJustChecked] = useState<number | null>(null);
+  const [openBenefit, setOpenBenefit] = useState<number | null>(null);
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -564,9 +602,8 @@ function VipLanding() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 * i + 0.3 }}
                       whileHover={{ scale: 1.02, y: -3 }}
-                      onClick={() => { /* locked: benefits cannot be unchecked by the user */ }}
-                      aria-disabled
-                      className={`glass glass-glow card-halo breathe rounded-2xl p-5 text-right relative overflow-hidden group transition-all duration-500 cursor-default ${
+                      onClick={() => setOpenBenefit(i)}
+                      className={`glass glass-glow card-halo breathe rounded-2xl p-5 text-right relative overflow-hidden group transition-all duration-500 cursor-pointer ${
                         isSel ? "ring-2 ring-[var(--gold)] shadow-[0_0_40px_oklch(0.82_0.14_88/0.4)]" : ""
                       }`}
                     >
@@ -616,6 +653,38 @@ function VipLanding() {
               </div>
 
               <CTA disabled={!canNext} onClick={next}>ادامه ثبت درخواست</CTA>
+
+              <Dialog open={openBenefit !== null} onOpenChange={(o) => !o && setOpenBenefit(null)}>
+                <DialogContent className="glass border-[var(--gold)]/30 bg-[var(--background)]/95 backdrop-blur-xl max-w-md text-right" dir="rtl">
+                  {openBenefit !== null && (() => {
+                    const b = benefits[openBenefit];
+                    const Icon = b.icon;
+                    return (
+                      <>
+                        <DialogHeader>
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="shrink-0 w-12 h-12 rounded-xl btn-gold flex items-center justify-center">
+                              <Icon className="w-6 h-6 text-white" />
+                            </div>
+                            <DialogTitle className="text-right text-xl gold-text">{b.title}</DialogTitle>
+                          </div>
+                          <DialogDescription className="text-right text-sm text-muted-foreground">
+                            {b.desc}
+                          </DialogDescription>
+                        </DialogHeader>
+                        <ul className="space-y-3 mt-2">
+                          {b.details.map((d, idx) => (
+                            <li key={idx} className="flex gap-3 items-start text-sm leading-relaxed">
+                              <span className="shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--gold)] shadow-[0_0_8px_var(--gold)]" />
+                              <span className="text-foreground/90">{d}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    );
+                  })()}
+                </DialogContent>
+              </Dialog>
             </motion.section>
           )}
 
