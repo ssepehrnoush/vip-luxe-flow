@@ -251,14 +251,34 @@ export default function VipIntroOverlay() {
     null,
   );
   const [closing, setClosing] = useState(false);
+  const [authed, setAuthed] = useState<boolean | null>(null);
+
+  // Only show the intro for signed-in users (skip on the login gate)
+  useEffect(() => {
+    let mounted = true;
+    import("@/integrations/supabase/client").then(({ supabase }) => {
+      supabase.auth.getSession().then(({ data }) => {
+        if (!mounted) return;
+        setAuthed(!!data.session);
+      });
+      const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+        setAuthed(!!session);
+      });
+      return () => sub.subscription.unsubscribe();
+    });
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   useEffect(() => {
+    if (!authed) return;
     const t = setTimeout(() => {
       setVisible(true);
       setShown(true);
     }, 1000);
     return () => clearTimeout(t);
-  }, []);
+  }, [authed]);
 
   // lock body scroll while overlay is up
   useEffect(() => {
