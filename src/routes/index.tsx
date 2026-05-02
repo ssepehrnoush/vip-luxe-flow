@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import {
   Syringe, ScanFace, Crown, MessageCircleHeart,
   Phone, MapPin, UploadCloud, Check, ArrowLeft, Sparkles, X,
@@ -49,6 +49,23 @@ function VipLanding() {
     passed: boolean;
   } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Cinematic parallax — background layers shift on scroll
+  const { scrollY } = useScroll();
+  const bgY = useTransform(scrollY, [0, 800], [0, -120]);
+  const blobY = useTransform(scrollY, [0, 800], [0, -60]);
+  const dustY = useTransform(scrollY, [0, 800], [0, -200]);
+
+  // Pre-computed dust particles
+  const dustParticles = useRef(
+    Array.from({ length: 22 }, (_, i) => ({
+      left: Math.random() * 100,
+      size: 2 + Math.random() * 4,
+      delay: Math.random() * 14,
+      duration: 12 + Math.random() * 10,
+      opacity: 0.4 + Math.random() * 0.5,
+    })).map((p, i) => ({ ...p, key: i }))
+  ).current;
 
   // Auto-check benefits one-by-one within ~2s (every 500ms)
   useEffect(() => {
@@ -179,15 +196,44 @@ function VipLanding() {
 
   return (
     <main className="relative min-h-screen overflow-hidden">
-      {/* Ambient luxury blobs */}
-      {/* Champagne gold ambient — top right */}
-      <div className="ambient-blob bg-[oklch(0.90_0.10_88)] w-[560px] h-[560px] -top-48 -right-48" />
-      {/* Warm peach/beige ambient — bottom left */}
-      <div className="ambient-blob bg-[oklch(0.91_0.07_55)] w-[640px] h-[640px] bottom-[-180px] -left-56" />
-      {/* Faint sand accent center */}
-      <div className="ambient-blob bg-[oklch(0.88_0.06_75)] w-[420px] h-[420px] top-1/2 right-1/3 opacity-25" />
+      {/* === Cinematic environment (back plane) === */}
+      <motion.div className="cinema-scene" style={{ y: bgY }}>
+        <div className="light-beam b1" />
+        <div className="light-beam b2" />
+        <div className="light-beam b3" />
+        <div className="light-streak" />
+      </motion.div>
 
-      <div className="relative z-10 mx-auto max-w-3xl px-5 pt-8 pb-20 sm:pt-14">
+      {/* Ambient luxury blobs (mid plane, slower parallax) */}
+      <motion.div className="absolute inset-0 pointer-events-none" style={{ y: blobY }}>
+        <div className="ambient-blob bg-[oklch(0.90_0.10_88)] w-[560px] h-[560px] -top-48 -right-48" />
+        <div className="ambient-blob bg-[oklch(0.91_0.07_55)] w-[640px] h-[640px] bottom-[-180px] -left-56" />
+        <div className="ambient-blob bg-[oklch(0.88_0.06_75)] w-[420px] h-[420px] top-1/2 right-1/3 opacity-25" />
+      </motion.div>
+
+      {/* Floating luxury dust particles (front plane) */}
+      <motion.div className="cinema-scene" style={{ y: dustY, zIndex: 1 }}>
+        {dustParticles.map((p) => (
+          <span
+            key={p.key}
+            className="dust"
+            style={{
+              left: `${p.left}%`,
+              bottom: `-10vh`,
+              width: `${p.size}px`,
+              height: `${p.size}px`,
+              animationDelay: `${p.delay}s`,
+              animationDuration: `${p.duration}s`,
+              opacity: p.opacity,
+            }}
+          />
+        ))}
+      </motion.div>
+
+      {/* One-shot camera reflection sweep on first paint */}
+      <div className="camera-sweep" />
+
+      <div className="relative z-10 mx-auto max-w-3xl px-5 pt-8 pb-20 sm:pt-14 cinema-fade">
         {/* Header */}
         <header className="flex items-center justify-between mb-10">
           <div className="flex items-center gap-3">
