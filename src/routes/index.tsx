@@ -19,7 +19,7 @@ export const Route = createFileRoute("/")({
 });
 
 const benefits = [
-  { icon: Syringe,         title: "هدیه بوتاکس مصپورت", desc: "افکت چشم گربه‌ای، توسط پزشک متخصص" },
+  { icon: Syringe,         title: "هدیه بوتاکس مصپورت", desc: "تکنیک چشم گربه‌ای، توسط پزشک متخصص" },
   { icon: ScanFace,        title: "آنالیز تخصصی صورت", desc: "ارزیابی کامل پوست و تناسب صورت" },
   { icon: Crown,           title: "عضویت در گروه VIP",  desc: "دسترسی به آفرها و رویدادهای اختصاصی" },
   { icon: MessageCircleHeart, title: "ارتباط مستقیم با پزشک", desc: "مشاوره خصوصی و پیگیری شخصی" },
