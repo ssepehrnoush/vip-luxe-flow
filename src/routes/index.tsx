@@ -249,26 +249,24 @@ function VipLanding() {
           </div>
         </header>
 
-        {/* Progress */}
+        {/* Progress bar */}
         <div className="mb-10">
-          <div className="flex items-center justify-between gap-2">
-            {steps.map((label, i) => (
-              <div key={i} className="flex-1 flex items-center gap-2">
-                <div className="flex flex-col items-center flex-1">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-500 ${
-                    i < step ? "btn-gold" : i === step ? "glass ring-2 ring-[var(--gold)]" : "glass opacity-50"
-                  }`}>
-                    {i < step ? <Check className="w-4 h-4" /> : i + 1}
-                  </div>
-                  <span className={`mt-2 text-[10px] sm:text-xs transition-opacity ${i === step ? "opacity-100 font-medium" : "opacity-50"}`}>
-                    {label}
-                  </span>
-                </div>
-                {i < steps.length - 1 && (
-                  <div className="h-px flex-1 bg-gradient-to-l from-transparent via-[var(--gold-soft)] to-transparent -mt-5" />
-                )}
-              </div>
-            ))}
+          <div className="flex items-center justify-between mb-2 text-xs">
+            <span className="font-medium text-[var(--gold-deep)] tracking-wide">
+              {steps[Math.min(step, steps.length - 1)]}
+            </span>
+            <span className="text-muted-foreground tabular-nums">
+              {Math.round((Math.min(step, steps.length - 1) / (steps.length - 1)) * 100)}%
+            </span>
+          </div>
+          <div className="relative h-1.5 rounded-full bg-[oklch(0.88_0.04_85/0.45)] overflow-hidden glass-glow">
+            <motion.div
+              className="absolute inset-y-0 right-0 rounded-full"
+              style={{ background: "var(--gradient-gold)", boxShadow: "0 0 18px oklch(0.82 0.12 88 / 0.5)" }}
+              initial={false}
+              animate={{ width: `${(Math.min(step, steps.length - 1) / (steps.length - 1)) * 100}%` }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            />
           </div>
         </div>
 
