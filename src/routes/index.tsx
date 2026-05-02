@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import {
   Syringe, ScanFace, Crown, MessageCircleHeart,
   Phone, MapPin, UploadCloud, Check, ArrowLeft, Sparkles, X,
-  AlertTriangle, Loader2, ImageIcon, Sun, Maximize2, Hash, CalendarClock
+  AlertTriangle, Loader2, ImageIcon, Sun, Maximize2, Hash, CalendarClock, Info, MousePointerClick
 } from "lucide-react";
 import logo from "@/assets/lemon-logo-neon.webp";
 import { supabase } from "@/integrations/supabase/client";
