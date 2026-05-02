@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, type PanInfo } from "framer-motion";
-import { Sparkles, ScanFace, Crown, Stethoscope } from "lucide-react";
+import iconFoxEyes from "@/assets/vv-icon-foxeyes.png";
+import iconFace from "@/assets/vv-icon-face.png";
+import iconCrown from "@/assets/vv-icon-crown.png";
+import iconChat from "@/assets/vv-icon-chat.png";
 
 type Benefit = {
   title: string;
   subtitle: string;
   tag: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: string;
 };
 
 const BENEFITS: Benefit[] = [
@@ -14,25 +17,25 @@ const BENEFITS: Benefit[] = [
     tag: "هدیه ورود",
     title: "بوتاکس VIP",
     subtitle: "طراحی نگاه روباهی (Fox Eyes) — هدیه اختصاصی عضویت",
-    icon: Sparkles,
+    icon: iconFoxEyes,
   },
   {
     tag: "تحلیل هوشمند",
     title: "آنالیز چهره",
     subtitle: "ارزیابی پوست با هوش مصنوعی و گزارش پزشکی اختصاصی",
-    icon: ScanFace,
+    icon: iconFace,
   },
   {
     tag: "عضویت طلایی",
     title: "دسترسی VIP",
     subtitle: "ورود به کلاب خصوصی لمون با خدمات و تخفیف‌های اختصاصی",
-    icon: Crown,
+    icon: iconCrown,
   },
   {
     tag: "کنسیرژ پزشکی",
     title: "ارتباط مستقیم با پزشک",
     subtitle: "خط ارتباطی شخصی و مشاوره بدون واسطه با تیم پزشکی",
-    icon: Stethoscope,
+    icon: iconChat,
   },
 ];
 
@@ -56,7 +59,7 @@ function SwipeCard({
       `linear-gradient(110deg, transparent ${Math.max(0, v - 25)}%, rgba(255,255,255,0.55) ${v}%, transparent ${v + 25}%)`,
   );
   const isTop = index === 0;
-  const Icon = benefit.icon;
+  const iconSrc = benefit.icon;
 
   const handleDragEnd = (_: unknown, info: PanInfo) => {
     const power = info.offset.x + info.velocity.x * 0.25;
@@ -147,14 +150,25 @@ function SwipeCard({
 
           <div className="flex flex-col items-center gap-5">
             <div
-              className="w-20 h-20 rounded-2xl flex items-center justify-center"
-              style={{
-                background: "var(--gradient-gold)",
-                boxShadow:
-                  "0 0 40px oklch(0.82 0.12 88 / 0.45), inset 0 1px 0 oklch(1 0 0 / 0.6)",
-              }}
+              className="relative w-32 h-32 flex items-center justify-center"
             >
-              <Icon className="w-9 h-9 text-[oklch(0.22_0.03_55)]" />
+              <div
+                className="absolute inset-0 rounded-full"
+                style={{
+                  background:
+                    "radial-gradient(circle, rgba(232,212,168,0.55) 0%, rgba(201,169,106,0.18) 50%, transparent 72%)",
+                  filter: "blur(10px)",
+                }}
+              />
+              <img
+                src={iconSrc}
+                alt={benefit.title}
+                className="relative w-full h-full object-contain"
+                style={{
+                  filter:
+                    "drop-shadow(0 12px 24px rgba(168,136,74,0.35)) drop-shadow(0 4px 8px rgba(168,136,74,0.25))",
+                }}
+              />
             </div>
             <div className="space-y-2">
               <h3 className="text-2xl font-bold text-foreground">{benefit.title}</h3>
@@ -191,7 +205,6 @@ function SwipeCard({
 }
 
 function FlyingCard({ benefit, dir }: { benefit: Benefit; dir: 1 | -1 }) {
-  const Icon = benefit.icon;
   return (
     <motion.div
       className="absolute inset-0 flex items-center justify-center pointer-events-none"
@@ -215,12 +228,15 @@ function FlyingCard({ benefit, dir }: { benefit: Benefit; dir: 1 | -1 }) {
           }}
         />
         <div className="relative h-full w-full flex items-center justify-center">
-          <div
-            className="w-20 h-20 rounded-2xl flex items-center justify-center"
-            style={{ background: "var(--gradient-gold)" }}
-          >
-            <Icon className="w-9 h-9 text-[oklch(0.22_0.03_55)]" />
-          </div>
+          <img
+            src={benefit.icon}
+            alt={benefit.title}
+            className="w-32 h-32 object-contain"
+            style={{
+              filter:
+                "drop-shadow(0 12px 24px rgba(168,136,74,0.35)) drop-shadow(0 4px 8px rgba(168,136,74,0.25))",
+            }}
+          />
         </div>
       </div>
     </motion.div>
