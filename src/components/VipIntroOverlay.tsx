@@ -205,7 +205,6 @@ function SwipeCard({
 }
 
 function FlyingCard({ benefit, dir }: { benefit: Benefit; dir: 1 | -1 }) {
-  const Icon = benefit.icon;
   return (
     <motion.div
       className="absolute inset-0 flex items-center justify-center pointer-events-none"
@@ -229,12 +228,15 @@ function FlyingCard({ benefit, dir }: { benefit: Benefit; dir: 1 | -1 }) {
           }}
         />
         <div className="relative h-full w-full flex items-center justify-center">
-          <div
-            className="w-20 h-20 rounded-2xl flex items-center justify-center"
-            style={{ background: "var(--gradient-gold)" }}
-          >
-            <Icon className="w-9 h-9 text-[oklch(0.22_0.03_55)]" />
-          </div>
+          <img
+            src={benefit.icon}
+            alt={benefit.title}
+            className="w-32 h-32 object-contain"
+            style={{
+              filter:
+                "drop-shadow(0 12px 24px rgba(168,136,74,0.35)) drop-shadow(0 4px 8px rgba(168,136,74,0.25))",
+            }}
+          />
         </div>
       </div>
     </motion.div>
