@@ -595,6 +595,10 @@ function VipLanding() {
                 </p>
               </div>
 
+              <div className="flex items-center justify-center gap-2 mb-4 text-xs text-[var(--gold-deep)]">
+                <MousePointerClick className="w-3.5 h-3.5 animate-pulse" />
+                <span className="tracking-wide">برای دیدن جزئیات، روی هر کارت بزنید</span>
+              </div>
               <div className="grid sm:grid-cols-2 gap-4 mb-10">
                 {benefits.map((b, i) => {
                   const Icon = b.icon;
@@ -606,7 +610,9 @@ function VipLanding() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 * i + 0.3 }}
                       whileHover={{ scale: 1.02, y: -3 }}
+                      whileTap={{ scale: 0.98 }}
                       onClick={() => setOpenBenefit(i)}
+                      aria-label={`جزئیات ${b.title}`}
                       className={`glass glass-glow card-halo breathe rounded-2xl p-5 text-right relative overflow-hidden group transition-all duration-500 cursor-pointer ${
                         isSel ? "ring-2 ring-[var(--gold)] shadow-[0_0_40px_oklch(0.82_0.14_88/0.4)]" : ""
                       }`}
@@ -615,6 +621,26 @@ function VipLanding() {
                         <span className="shine-sweep absolute inset-0 rounded-2xl pointer-events-none" />
                       )}
                       <div className="absolute top-0 right-0 left-0 h-px bg-gradient-to-l from-transparent via-[var(--gold)] to-transparent opacity-80" />
+
+                      {/* Info badge — affordance that the card is tappable */}
+                      <span
+                        className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium tracking-wide pointer-events-none"
+                        style={{
+                          background: "var(--gradient-gold)",
+                          color: "white",
+                          boxShadow:
+                            "0 4px 12px -3px oklch(0.82 0.14 88 / 0.55), inset 0 1px 0 rgba(255,255,255,0.4)",
+                        }}
+                      >
+                        <Info className="w-3 h-3" />
+                        جزئیات
+                      </span>
+                      {/* soft pulsing ring around the badge */}
+                      <span
+                        className="absolute top-1.5 left-1.5 w-3 h-3 rounded-full pointer-events-none animate-ping"
+                        style={{ background: "oklch(0.82 0.14 88 / 0.7)", animationDuration: "2.4s" }}
+                      />
+
                       <div className="flex items-start gap-4">
                         <div className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center transition-all ${
                           isSel ? "btn-gold" : "bg-[var(--gold-soft)]/50"
@@ -624,6 +650,10 @@ function VipLanding() {
                         <div className="flex-1">
                           <h3 className="font-bold text-base sm:text-lg mb-1">{b.title}</h3>
                           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{b.desc}</p>
+                          <span className="inline-flex items-center gap-1 mt-2 text-[11px] text-[var(--gold-deep)] font-medium opacity-90 group-hover:opacity-100">
+                            بیشتر بخوانید
+                            <ArrowLeft className="w-3 h-3 transition-transform group-hover:-translate-x-1" />
+                          </span>
                         </div>
                         <div className={`relative w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
                           isSel ? "border-[var(--gold)] bg-[var(--gold)]" : "border-[var(--border)]"
