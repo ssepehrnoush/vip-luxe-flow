@@ -653,6 +653,38 @@ function VipLanding() {
               </div>
 
               <CTA disabled={!canNext} onClick={next}>ادامه ثبت درخواست</CTA>
+
+              <Dialog open={openBenefit !== null} onOpenChange={(o) => !o && setOpenBenefit(null)}>
+                <DialogContent className="glass border-[var(--gold)]/30 bg-[var(--background)]/95 backdrop-blur-xl max-w-md text-right" dir="rtl">
+                  {openBenefit !== null && (() => {
+                    const b = benefits[openBenefit];
+                    const Icon = b.icon;
+                    return (
+                      <>
+                        <DialogHeader>
+                          <div className="flex items-center gap-3 mb-2">
+                            <div className="shrink-0 w-12 h-12 rounded-xl btn-gold flex items-center justify-center">
+                              <Icon className="w-6 h-6 text-white" />
+                            </div>
+                            <DialogTitle className="text-right text-xl gold-text">{b.title}</DialogTitle>
+                          </div>
+                          <DialogDescription className="text-right text-sm text-muted-foreground">
+                            {b.desc}
+                          </DialogDescription>
+                        </DialogHeader>
+                        <ul className="space-y-3 mt-2">
+                          {b.details.map((d, idx) => (
+                            <li key={idx} className="flex gap-3 items-start text-sm leading-relaxed">
+                              <span className="shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--gold)] shadow-[0_0_8px_var(--gold)]" />
+                              <span className="text-foreground/90">{d}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </>
+                    );
+                  })()}
+                </DialogContent>
+              </Dialog>
             </motion.section>
           )}
 
