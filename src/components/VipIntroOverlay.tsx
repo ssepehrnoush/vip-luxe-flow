@@ -94,14 +94,22 @@ function SwipeCard({
         dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
         dragElastic={0.6}
         onDragEnd={handleDragEnd}
-        style={{ x: isTop ? x : 0, rotate: isTop ? rotate : 0 }}
         whileTap={isTop ? { cursor: "grabbing" } : undefined}
         animate={
           isTop
             ? { y: [0, -6, 0], transition: { duration: 4.5, repeat: Infinity, ease: "easeInOut" } }
             : undefined
         }
-        className={`relative w-[86vw] max-w-[360px] aspect-[3/4] rounded-[28px] glass glass-glow overflow-hidden ${
+        style={{
+          x: isTop ? x : 0,
+          rotate: isTop ? rotate : 0,
+          background:
+            "linear-gradient(140deg, oklch(0.985 0.008 85) 0%, oklch(0.96 0.018 82) 60%, oklch(0.92 0.035 82) 100%)",
+          border: "1px solid oklch(0.78 0.085 78 / 0.45)",
+          boxShadow:
+            "0 30px 80px -20px rgba(60,40,20,0.35), 0 10px 30px -10px rgba(60,40,20,0.2), inset 0 1px 0 rgba(255,248,230,0.7)",
+        }}
+        className={`relative w-[86vw] max-w-[360px] aspect-[3/4] rounded-[28px] overflow-hidden ${
           isTop ? "cursor-grab" : "pointer-events-none"
         }`}
       >
