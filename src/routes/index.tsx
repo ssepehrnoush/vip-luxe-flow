@@ -311,7 +311,7 @@ function VipLanding() {
                       whileHover={{ scale: 1.02, y: -3 }}
                       onClick={() => { /* locked: benefits cannot be unchecked by the user */ }}
                       aria-disabled
-                      className={`glass rounded-2xl p-5 text-right relative overflow-hidden group transition-all duration-500 cursor-default ${
+                      className={`glass glass-glow card-halo breathe rounded-2xl p-5 text-right relative overflow-hidden group transition-all duration-500 cursor-default ${
                         isSel ? "ring-2 ring-[var(--gold)] shadow-[0_0_40px_oklch(0.82_0.14_88/0.4)]" : ""
                       }`}
                     >
