@@ -311,41 +311,148 @@ function VipLanding() {
                 hidden
                 onChange={(e) => onFile(e.target.files?.[0] ?? null)}
               />
-              <motion.div
-                onClick={() => inputRef.current?.click()}
-                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                onDragLeave={() => setDragOver(false)}
-                onDrop={(e) => { e.preventDefault(); setDragOver(false); onFile(e.dataTransfer.files?.[0] ?? null); }}
-                animate={dragOver ? { scale: 1.02 } : { scale: 1 }}
-                className={`glass rounded-3xl p-10 sm:p-14 cursor-pointer text-center relative overflow-hidden transition-all ${
-                  dragOver ? "ring-2 ring-[var(--gold)] shadow-[0_0_60px_oklch(0.82_0.14_88/0.5)]" : ""
-                }`}
-              >
-                {preview ? (
-                  <div className="relative inline-block">
-                    <img src={preview} alt="پیش‌نمایش" className="max-h-64 rounded-2xl shadow-lg mx-auto" />
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setFile(null); setPreview(null); }}
-                      className="absolute -top-3 -left-3 w-8 h-8 rounded-full glass flex items-center justify-center"
-                      aria-label="حذف"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+              {!preview ? (
+                <motion.div
+                  onClick={() => inputRef.current?.click()}
+                  onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={(e) => { e.preventDefault(); setDragOver(false); onFile(e.dataTransfer.files?.[0] ?? null); }}
+                  animate={dragOver ? { scale: 1.02 } : { scale: 1 }}
+                  className={`glass rounded-3xl p-10 sm:p-14 cursor-pointer text-center relative overflow-hidden transition-all ${
+                    dragOver ? "ring-2 ring-[var(--gold)] shadow-[0_0_60px_oklch(0.82_0.14_88/0.5)]" : ""
+                  }`}
+                >
+                  <motion.div
+                    animate={{ y: [0, -8, 0] }}
+                    transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+                    className="w-20 h-20 mx-auto mb-5 rounded-2xl btn-gold flex items-center justify-center"
+                  >
+                    <UploadCloud className="w-10 h-10 text-white" />
+                  </motion.div>
+                  <p className="font-bold text-lg mb-2">تصویر را اینجا رها کنید</p>
+                  <p className="text-sm text-muted-foreground">یا برای انتخاب کلیک کنید — JPG / PNG</p>
+                  <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-[11px] text-muted-foreground">
+                    <span className="glass rounded-full px-3 py-1">حداقل ۶۰۰px</span>
+                    <span className="glass rounded-full px-3 py-1">نور یکنواخت</span>
+                    <span className="glass rounded-full px-3 py-1">بدون فیلتر</span>
                   </div>
-                ) : (
-                  <>
-                    <motion.div
-                      animate={{ y: [0, -8, 0] }}
-                      transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-                      className="w-20 h-20 mx-auto mb-5 rounded-2xl btn-gold flex items-center justify-center"
-                    >
-                      <UploadCloud className="w-10 h-10 text-white" />
-                    </motion.div>
-                    <p className="font-bold text-lg mb-2">تصویر را اینجا رها کنید</p>
-                    <p className="text-sm text-muted-foreground">یا برای انتخاب کلیک کنید — JPG / PNG</p>
-                  </>
-                )}
-              </motion.div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="glass rounded-3xl p-4 sm:p-5 relative overflow-hidden"
+                >
+                  <div className="grid sm:grid-cols-[200px_1fr] gap-5 items-stretch">
+                    {/* Preview */}
+                    <div className="relative rounded-2xl overflow-hidden bg-[var(--ivory)] aspect-[3/4] sm:aspect-auto">
+                      <img src={preview} alt="پیش‌نمایش" className="w-full h-full object-cover" />
+                      {analyzing && (
+                        <div className="absolute inset-0 backdrop-blur-sm bg-black/20 flex flex-col items-center justify-center text-white">
+                          <Loader2 className="w-7 h-7 animate-spin mb-2" />
+                          <span className="text-xs">در حال بررسی کیفیت…</span>
+                        </div>
+                      )}
+                      {quality && !analyzing && (
+                        <div className="absolute top-2 right-2 left-2 flex items-center justify-between">
+                          <span className={`glass rounded-full px-2.5 py-1 text-[10px] font-bold flex items-center gap-1 ${
+                            quality.passed ? "text-[var(--gold-deep)]" : "text-destructive"
+                          }`}>
+                            {quality.passed ? <Check className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
+                            {quality.score}٪
+                          </span>
+                          <button
+                            onClick={clearFile}
+                            className="w-7 h-7 rounded-full glass flex items-center justify-center"
+                            aria-label="حذف"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Quality report */}
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2 mb-3">
+                        <ImageIcon className="w-4 h-4 text-[var(--gold-deep)]" />
+                        <h3 className="font-bold text-sm">بررسی خودکار کیفیت</h3>
+                      </div>
+
+                      {/* Score bar */}
+                      <div className="mb-4">
+                        <div className="h-2 rounded-full bg-[var(--gold-soft)]/40 overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${quality?.score ?? 0}%` }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            className={`h-full rounded-full ${
+                              quality?.passed
+                                ? "bg-gradient-to-l from-[var(--gold)] to-[var(--gold-deep)]"
+                                : "bg-gradient-to-l from-orange-400 to-red-400"
+                            }`}
+                          />
+                        </div>
+                      </div>
+
+                      <ul className="space-y-2">
+                        {(quality?.checks ?? [
+                          { label: "وضوح", ok: false, icon: "res" as const },
+                          { label: "نور", ok: false, icon: "light" as const },
+                          { label: "فوکوس", ok: false, icon: "sharp" as const },
+                          { label: "حجم", ok: false, icon: "size" as const },
+                        ]).map((c, i) => {
+                          const Icon = c.icon === "res" ? Maximize2
+                            : c.icon === "light" ? Sun
+                            : c.icon === "sharp" ? ScanFace
+                            : ImageIcon;
+                          return (
+                            <motion.li
+                              key={i}
+                              initial={{ opacity: 0, x: -8 }}
+                              animate={{ opacity: analyzing ? 0.3 : 1, x: 0 }}
+                              transition={{ delay: 0.05 * i }}
+                              className="flex items-center gap-3 text-xs"
+                            >
+                              <span className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+                                analyzing ? "bg-[var(--gold-soft)]/40"
+                                : c.ok ? "bg-[var(--gold)]/25 text-[var(--gold-deep)]"
+                                : "bg-destructive/15 text-destructive"
+                              }`}>
+                                {analyzing ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                  : c.ok ? <Check className="w-3.5 h-3.5" />
+                                  : <Icon className="w-3.5 h-3.5" />}
+                              </span>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium">{c.label}</p>
+                                {("hint" in c) && c.hint && (
+                                  <p className="text-[10px] text-muted-foreground truncate">{c.hint}</p>
+                                )}
+                              </div>
+                            </motion.li>
+                          );
+                        })}
+                      </ul>
+
+                      {quality && !analyzing && !quality.passed && (
+                        <button
+                          onClick={() => inputRef.current?.click()}
+                          className="mt-4 glass rounded-xl px-3 py-2 text-xs font-medium flex items-center justify-center gap-2 hover:scale-[1.02] transition"
+                        >
+                          <UploadCloud className="w-3.5 h-3.5" />
+                          آپلود تصویر دیگر
+                        </button>
+                      )}
+                      {quality?.passed && !analyzing && (
+                        <div className="mt-4 flex items-center gap-2 text-xs text-[var(--gold-deep)] font-medium">
+                          <Sparkles className="w-3.5 h-3.5" />
+                          تصویر تایید شد
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
               <Nav onBack={back} onNext={next} canNext={canNext} nextLabel="ثبت نهایی درخواست" />
             </StepShell>
           )}
