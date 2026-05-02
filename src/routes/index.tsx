@@ -1219,9 +1219,9 @@ function Nav({ onBack, onNext, canNext, nextLabel = "ادامه", backDisabled =
 }
 
 function SuccessScreen({
-  refCode, phone, address, preview, selected, quality, status,
+  refCode, fullName, phone, address, preview, selected, quality, status,
 }: {
-  refCode: string; phone: string; address: string;
+  refCode: string; fullName: string; phone: string; address: string;
   preview: string | null; selected: number[];
   quality: { score: number } | null;
   status?: string | null;
@@ -1332,7 +1332,7 @@ function SuccessScreen({
             )}
             <div>
               <p className="text-[10px] text-muted-foreground tracking-widest">VIP MEMBER</p>
-              <p className="font-bold text-sm">عضو محترم لمون</p>
+              <p className="font-bold text-sm">{fullName || "عضو محترم لمون"}</p>
             </div>
           </div>
           <div className="text-left">
