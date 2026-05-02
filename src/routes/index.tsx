@@ -861,7 +861,7 @@ function SuccessScreen({
           <SummaryRow icon={<Sparkles className="w-3.5 h-3.5" />} label="مزایای انتخابی">
             <div className="flex flex-wrap gap-1.5 justify-end">
               {selected.map((i) => (
-                <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--gold-soft)]/60 text-[var(--gold-deep)] font-medium">
+                <span key={i} className="text-[11px] px-2.5 py-1 rounded-full bg-[var(--gold-deep)] text-white font-bold shadow-sm border border-[var(--gold-deep)]">
                   {benefits[i].title}
                 </span>
               ))}
