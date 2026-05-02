@@ -208,6 +208,26 @@ function VipLanding() {
     setSigningIn(false);
   };
 
+  // Google sign-in via Lovable Cloud managed OAuth.
+  const handleGoogleLogin = async () => {
+    setSigningIn(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.redirected) return; // browser navigates away
+      if (result.error) {
+        toast.error("ورود با گوگل ناموفق بود");
+        setSigningIn(false);
+        return;
+      }
+      // session set — onAuthStateChange will handle the rest
+    } catch {
+      toast.error("ورود با گوگل ناموفق بود");
+      setSigningIn(false);
+    }
+  };
+
   // Cinematic parallax — background layers shift on scroll
   const { scrollY } = useScroll();
   const bgY = useTransform(scrollY, [0, 800], [0, -120]);
