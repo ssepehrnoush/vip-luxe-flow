@@ -628,6 +628,19 @@ function VipLanding() {
           )}
 
           {!authChecking && userId && step === 0 && (
+            <StepShell key="name" title="نام و نام خانوادگی شما" subtitle="برای ثبت پرونده اختصاصی در کلاب VIP">
+              <FloatingInput
+                icon={<User className="w-5 h-5" />}
+                label="نام و نام خانوادگی"
+                value={fullName}
+                onChange={setFullName}
+                placeholder="مثلاً سارا محمدی"
+              />
+              <Nav onBack={back} onNext={next} canNext={canNext} backDisabled />
+            </StepShell>
+          )}
+
+          {!authChecking && userId && step === 1 && (
             <motion.section
               key="hero"
               initial={{ opacity: 0, y: 20 }}
