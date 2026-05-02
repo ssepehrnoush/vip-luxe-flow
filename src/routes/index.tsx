@@ -379,7 +379,7 @@ function VipLanding() {
     setAnalyzing(false);
   };
 
-  const next = () => setStep((s) => Math.min(s + 1, 4));
+  const next = () => setStep((s) => Math.min(s + 1, 5));
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
   const submitToBackend = async () => {
@@ -431,11 +431,14 @@ function VipLanding() {
     }
   };
 
+  const nameParts = fullName.trim().split(/\s+/).filter((p) => p.length >= 2);
+  const nameOk = nameParts.length >= 2;
   const canNext =
-    (step === 0 && selected.length > 0) ||
-    (step === 1 && /^09\d{9}$/.test(phone)) ||
-    (step === 2 && address.trim().length > 8) ||
-    (step === 3 && !!file && !analyzing && !!quality?.passed);
+    (step === 0 && nameOk) ||
+    (step === 1 && selected.length > 0) ||
+    (step === 2 && /^09\d{9}$/.test(phone)) ||
+    (step === 3 && address.trim().length > 8) ||
+    (step === 4 && !!file && !analyzing && !!quality?.passed);
 
   return (
     <main className="relative min-h-screen overflow-hidden">
