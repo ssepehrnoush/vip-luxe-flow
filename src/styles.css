@@ -401,4 +401,30 @@
       0 24px 60px -22px oklch(0.45 0.08 65 / 0.22),
       0 0 30px oklch(0.82 0.12 88 / 0.20);
   }
+
+  /* Neon logo glow — soft pulsing champagne halo */
+  .neon-logo {
+    filter:
+      drop-shadow(0 0 4px rgba(232, 212, 168, 0.95))
+      drop-shadow(0 0 10px rgba(201, 169, 106, 0.85))
+      drop-shadow(0 0 22px rgba(201, 169, 106, 0.55))
+      drop-shadow(0 0 38px rgba(168, 136, 74, 0.35));
+    animation: neon-pulse 3.2s ease-in-out infinite;
+  }
+  @keyframes neon-pulse {
+    0%, 100% {
+      filter:
+        drop-shadow(0 0 4px rgba(232, 212, 168, 0.95))
+        drop-shadow(0 0 10px rgba(201, 169, 106, 0.85))
+        drop-shadow(0 0 22px rgba(201, 169, 106, 0.55))
+        drop-shadow(0 0 38px rgba(168, 136, 74, 0.35));
+    }
+    50% {
+      filter:
+        drop-shadow(0 0 6px rgba(240, 221, 180, 1))
+        drop-shadow(0 0 16px rgba(212, 180, 119, 0.95))
+        drop-shadow(0 0 32px rgba(201, 169, 106, 0.75))
+        drop-shadow(0 0 52px rgba(168, 136, 74, 0.5));
+    }
+  }
 }
