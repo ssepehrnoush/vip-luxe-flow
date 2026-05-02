@@ -3,7 +3,8 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Syringe, ScanFace, Crown, MessageCircleHeart,
-  Phone, MapPin, UploadCloud, Check, ArrowLeft, Sparkles, X
+  Phone, MapPin, UploadCloud, Check, ArrowLeft, Sparkles, X,
+  AlertTriangle, Loader2, ImageIcon, Sun, Maximize2
 } from "lucide-react";
 import logo from "@/assets/lemon-logo.png";
 
@@ -34,15 +35,115 @@ function VipLanding() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [quality, setQuality] = useState<{
+    width: number; height: number; brightness: number;
+    sharpness: number; sizeKB: number;
+    checks: { label: string; ok: boolean; icon: "res" | "light" | "sharp" | "size"; hint?: string }[];
+    score: number;
+    passed: boolean;
+  } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const toggle = (i: number) =>
     setSelected((s) => (s.includes(i) ? s.filter((x) => x !== i) : [...s, i]));
 
-  const onFile = (f: File | null) => {
+  const analyzeImage = (url: string, f: File) =>
+    new Promise<NonNullable<typeof quality>>((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const w = (canvas.width = Math.min(img.naturalWidth, 320));
+        const h = (canvas.height = Math.round((img.naturalHeight / img.naturalWidth) * w));
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return reject(new Error("no ctx"));
+        ctx.drawImage(img, 0, 0, w, h);
+        const { data } = ctx.getImageData(0, 0, w, h);
+        // Brightness (perceived luma 0..255)
+        let sum = 0;
+        const lumas = new Float32Array((data.length / 4) | 0);
+        for (let i = 0, j = 0; i < data.length; i += 4, j++) {
+          const l = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+          lumas[j] = l;
+          sum += l;
+        }
+        const brightness = sum / lumas.length;
+        // Sharpness via Laplacian variance (simplified)
+        let sVar = 0; let sMean = 0; let n = 0;
+        for (let y = 1; y < h - 1; y++) {
+          for (let x = 1; x < w - 1; x++) {
+            const i = y * w + x;
+            const lap =
+              -4 * lumas[i] + lumas[i - 1] + lumas[i + 1] + lumas[i - w] + lumas[i + w];
+            sMean += lap; n++;
+          }
+        }
+        sMean /= n;
+        for (let y = 1; y < h - 1; y++) {
+          for (let x = 1; x < w - 1; x++) {
+            const i = y * w + x;
+            const lap =
+              -4 * lumas[i] + lumas[i - 1] + lumas[i + 1] + lumas[i - w] + lumas[i + w];
+            sVar += (lap - sMean) ** 2;
+          }
+        }
+        const sharpness = sVar / n;
+
+        const W = img.naturalWidth, H = img.naturalHeight;
+        const sizeKB = f.size / 1024;
+        const resOk = Math.min(W, H) >= 600;
+        const lightOk = brightness >= 70 && brightness <= 210;
+        const sharpOk = sharpness >= 80;
+        const sizeOk = sizeKB >= 60 && sizeKB <= 8 * 1024;
+
+        const checks = [
+          { label: `وضوح ${W}×${H}`, ok: resOk, icon: "res" as const,
+            hint: resOk ? "وضوح مناسب" : "حداقل ۶۰۰ پیکسل لازم است" },
+          { label: brightness < 70 ? "نور کم" : brightness > 210 ? "نور زیاد" : "نور مناسب",
+            ok: lightOk, icon: "light" as const,
+            hint: lightOk ? "روشنایی متعادل" : "در نور یکنواخت طبیعی عکس بگیرید" },
+          { label: sharpOk ? "تصویر واضح" : "کمی تار",
+            ok: sharpOk, icon: "sharp" as const,
+            hint: sharpOk ? "فوکوس مناسب" : "دوربین را ثابت نگه دارید" },
+          { label: `${sizeKB < 1024 ? sizeKB.toFixed(0) + " KB" : (sizeKB / 1024).toFixed(1) + " MB"}`,
+            ok: sizeOk, icon: "size" as const,
+            hint: sizeOk ? "حجم مناسب" : "حجم تصویر مناسب نیست" },
+        ];
+        const passedCount = checks.filter((c) => c.ok).length;
+        const score = Math.round((passedCount / checks.length) * 100);
+        resolve({
+          width: W, height: H, brightness, sharpness, sizeKB,
+          checks, score, passed: passedCount >= 3 && resOk,
+        });
+      };
+      img.onerror = () => reject(new Error("load fail"));
+      img.src = url;
+    });
+
+  const onFile = async (f: File | null) => {
     if (!f) return;
+    if (!f.type.startsWith("image/")) return;
+    const url = URL.createObjectURL(f);
     setFile(f);
-    setPreview(URL.createObjectURL(f));
+    setPreview(url);
+    setQuality(null);
+    setAnalyzing(true);
+    try {
+      const q = await analyzeImage(url, f);
+      setQuality(q);
+    } catch {
+      setQuality(null);
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
+  const clearFile = () => {
+    if (preview) URL.revokeObjectURL(preview);
+    setFile(null);
+    setPreview(null);
+    setQuality(null);
+    setAnalyzing(false);
   };
 
   const next = () => setStep((s) => Math.min(s + 1, 4));
@@ -52,7 +153,7 @@ function VipLanding() {
     (step === 0 && selected.length > 0) ||
     (step === 1 && /^09\d{9}$/.test(phone)) ||
     (step === 2 && address.trim().length > 8) ||
-    (step === 3 && !!file);
+    (step === 3 && !!file && !analyzing && !!quality?.passed);
 
   return (
     <main className="relative min-h-screen overflow-hidden">
@@ -210,41 +311,148 @@ function VipLanding() {
                 hidden
                 onChange={(e) => onFile(e.target.files?.[0] ?? null)}
               />
-              <motion.div
-                onClick={() => inputRef.current?.click()}
-                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                onDragLeave={() => setDragOver(false)}
-                onDrop={(e) => { e.preventDefault(); setDragOver(false); onFile(e.dataTransfer.files?.[0] ?? null); }}
-                animate={dragOver ? { scale: 1.02 } : { scale: 1 }}
-                className={`glass rounded-3xl p-10 sm:p-14 cursor-pointer text-center relative overflow-hidden transition-all ${
-                  dragOver ? "ring-2 ring-[var(--gold)] shadow-[0_0_60px_oklch(0.82_0.14_88/0.5)]" : ""
-                }`}
-              >
-                {preview ? (
-                  <div className="relative inline-block">
-                    <img src={preview} alt="پیش‌نمایش" className="max-h-64 rounded-2xl shadow-lg mx-auto" />
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setFile(null); setPreview(null); }}
-                      className="absolute -top-3 -left-3 w-8 h-8 rounded-full glass flex items-center justify-center"
-                      aria-label="حذف"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
+              {!preview ? (
+                <motion.div
+                  onClick={() => inputRef.current?.click()}
+                  onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={(e) => { e.preventDefault(); setDragOver(false); onFile(e.dataTransfer.files?.[0] ?? null); }}
+                  animate={dragOver ? { scale: 1.02 } : { scale: 1 }}
+                  className={`glass rounded-3xl p-10 sm:p-14 cursor-pointer text-center relative overflow-hidden transition-all ${
+                    dragOver ? "ring-2 ring-[var(--gold)] shadow-[0_0_60px_oklch(0.82_0.14_88/0.5)]" : ""
+                  }`}
+                >
+                  <motion.div
+                    animate={{ y: [0, -8, 0] }}
+                    transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+                    className="w-20 h-20 mx-auto mb-5 rounded-2xl btn-gold flex items-center justify-center"
+                  >
+                    <UploadCloud className="w-10 h-10 text-white" />
+                  </motion.div>
+                  <p className="font-bold text-lg mb-2">تصویر را اینجا رها کنید</p>
+                  <p className="text-sm text-muted-foreground">یا برای انتخاب کلیک کنید — JPG / PNG</p>
+                  <div className="mt-6 flex flex-wrap items-center justify-center gap-2 text-[11px] text-muted-foreground">
+                    <span className="glass rounded-full px-3 py-1">حداقل ۶۰۰px</span>
+                    <span className="glass rounded-full px-3 py-1">نور یکنواخت</span>
+                    <span className="glass rounded-full px-3 py-1">بدون فیلتر</span>
                   </div>
-                ) : (
-                  <>
-                    <motion.div
-                      animate={{ y: [0, -8, 0] }}
-                      transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-                      className="w-20 h-20 mx-auto mb-5 rounded-2xl btn-gold flex items-center justify-center"
-                    >
-                      <UploadCloud className="w-10 h-10 text-white" />
-                    </motion.div>
-                    <p className="font-bold text-lg mb-2">تصویر را اینجا رها کنید</p>
-                    <p className="text-sm text-muted-foreground">یا برای انتخاب کلیک کنید — JPG / PNG</p>
-                  </>
-                )}
-              </motion.div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="glass rounded-3xl p-4 sm:p-5 relative overflow-hidden"
+                >
+                  <div className="grid sm:grid-cols-[200px_1fr] gap-5 items-stretch">
+                    {/* Preview */}
+                    <div className="relative rounded-2xl overflow-hidden bg-[var(--ivory)] aspect-[3/4] sm:aspect-auto">
+                      <img src={preview} alt="پیش‌نمایش" className="w-full h-full object-cover" />
+                      {analyzing && (
+                        <div className="absolute inset-0 backdrop-blur-sm bg-black/20 flex flex-col items-center justify-center text-white">
+                          <Loader2 className="w-7 h-7 animate-spin mb-2" />
+                          <span className="text-xs">در حال بررسی کیفیت…</span>
+                        </div>
+                      )}
+                      {quality && !analyzing && (
+                        <div className="absolute top-2 right-2 left-2 flex items-center justify-between">
+                          <span className={`glass rounded-full px-2.5 py-1 text-[10px] font-bold flex items-center gap-1 ${
+                            quality.passed ? "text-[var(--gold-deep)]" : "text-destructive"
+                          }`}>
+                            {quality.passed ? <Check className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
+                            {quality.score}٪
+                          </span>
+                          <button
+                            onClick={clearFile}
+                            className="w-7 h-7 rounded-full glass flex items-center justify-center"
+                            aria-label="حذف"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Quality report */}
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-2 mb-3">
+                        <ImageIcon className="w-4 h-4 text-[var(--gold-deep)]" />
+                        <h3 className="font-bold text-sm">بررسی خودکار کیفیت</h3>
+                      </div>
+
+                      {/* Score bar */}
+                      <div className="mb-4">
+                        <div className="h-2 rounded-full bg-[var(--gold-soft)]/40 overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${quality?.score ?? 0}%` }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            className={`h-full rounded-full ${
+                              quality?.passed
+                                ? "bg-gradient-to-l from-[var(--gold)] to-[var(--gold-deep)]"
+                                : "bg-gradient-to-l from-orange-400 to-red-400"
+                            }`}
+                          />
+                        </div>
+                      </div>
+
+                      <ul className="space-y-2">
+                        {(quality?.checks ?? [
+                          { label: "وضوح", ok: false, icon: "res" as const },
+                          { label: "نور", ok: false, icon: "light" as const },
+                          { label: "فوکوس", ok: false, icon: "sharp" as const },
+                          { label: "حجم", ok: false, icon: "size" as const },
+                        ]).map((c, i) => {
+                          const Icon = c.icon === "res" ? Maximize2
+                            : c.icon === "light" ? Sun
+                            : c.icon === "sharp" ? ScanFace
+                            : ImageIcon;
+                          return (
+                            <motion.li
+                              key={i}
+                              initial={{ opacity: 0, x: -8 }}
+                              animate={{ opacity: analyzing ? 0.3 : 1, x: 0 }}
+                              transition={{ delay: 0.05 * i }}
+                              className="flex items-center gap-3 text-xs"
+                            >
+                              <span className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+                                analyzing ? "bg-[var(--gold-soft)]/40"
+                                : c.ok ? "bg-[var(--gold)]/25 text-[var(--gold-deep)]"
+                                : "bg-destructive/15 text-destructive"
+                              }`}>
+                                {analyzing ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                  : c.ok ? <Check className="w-3.5 h-3.5" />
+                                  : <Icon className="w-3.5 h-3.5" />}
+                              </span>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium">{c.label}</p>
+                                {("hint" in c) && c.hint && (
+                                  <p className="text-[10px] text-muted-foreground truncate">{c.hint}</p>
+                                )}
+                              </div>
+                            </motion.li>
+                          );
+                        })}
+                      </ul>
+
+                      {quality && !analyzing && !quality.passed && (
+                        <button
+                          onClick={() => inputRef.current?.click()}
+                          className="mt-4 glass rounded-xl px-3 py-2 text-xs font-medium flex items-center justify-center gap-2 hover:scale-[1.02] transition"
+                        >
+                          <UploadCloud className="w-3.5 h-3.5" />
+                          آپلود تصویر دیگر
+                        </button>
+                      )}
+                      {quality?.passed && !analyzing && (
+                        <div className="mt-4 flex items-center gap-2 text-xs text-[var(--gold-deep)] font-medium">
+                          <Sparkles className="w-3.5 h-3.5" />
+                          تصویر تایید شد
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
               <Nav onBack={back} onNext={next} canNext={canNext} nextLabel="ثبت نهایی درخواست" />
             </StepShell>
           )}
