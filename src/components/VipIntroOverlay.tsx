@@ -59,7 +59,7 @@ function SwipeCard({
       `linear-gradient(110deg, transparent ${Math.max(0, v - 25)}%, rgba(255,255,255,0.55) ${v}%, transparent ${v + 25}%)`,
   );
   const isTop = index === 0;
-  const Icon = benefit.icon;
+  const iconSrc = benefit.icon;
 
   const handleDragEnd = (_: unknown, info: PanInfo) => {
     const power = info.offset.x + info.velocity.x * 0.25;
