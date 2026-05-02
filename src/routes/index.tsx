@@ -9,6 +9,7 @@ import {
 import logo from "@/assets/lemon-logo-neon.webp";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,10 +22,46 @@ export const Route = createFileRoute("/")({
 });
 
 const benefits = [
-  { icon: Syringe,         title: "هدیه بوتاکس مصپورت", desc: "تکنیک چشم گربه‌ای، توسط پزشک متخصص" },
-  { icon: ScanFace,        title: "آنالیز تخصصی چهره", desc: "ارزیابی کامل پوستی و ارائه روتین مراقبتی" },
-  { icon: Crown,           title: "عضویت در گروه VIP",  desc: "دسترسی به آفرها و رویدادهای اختصاصی" },
-  { icon: MessageCircleHeart, title: "ارتباط مستقیم با پزشک", desc: "مشاوره خصوصی و پیگیری شخصی" },
+  {
+    icon: Syringe,
+    title: "هدیه بوتاکس مصپورت",
+    desc: "تکنیک چشم گربه‌ای، توسط پزشک متخصص",
+    details: [
+      "تمام اعضای کلاب VIP لمون، میهمان همیشگی ما در خدمات بوتاکس هستند — کاملاً رایگان و بدون محدودیت زمانی.",
+      "برند مورد استفاده «مصپورت (Masport)» است؛ یکی از معتبرترین برندهای جهانی با ماندگاری بالا و نتیجهٔ طبیعی.",
+      "نواحی تحت پوشش: خط اخم، بالای ابرو (لیفت ابرو) و چین‌های پنجه‌کلاغی — متناسب با آناتومی چهرهٔ شما توسط پزشک طراحی می‌شود.",
+    ],
+  },
+  {
+    icon: ScanFace,
+    title: "آنالیز تخصصی چهره",
+    desc: "ارزیابی کامل پوستی و ارائه روتین مراقبتی",
+    details: [
+      "آنالیز چهره مستقیماً توسط پزشک متخصص انجام می‌شود — بدون واسطه و بدون دستگاه‌های عمومی.",
+      "وضعیت پوست، تناسب اجزا، خطوط بیانی و نقاط قابل بهبود به‌صورت دقیق بررسی می‌شود.",
+      "در پایان، یک Home Care اختصاصی برای نوع پوست شما تجویز می‌شود؛ شامل ترتیب محصولات، روتین صبح و شب و توصیه‌های فصلی.",
+    ],
+  },
+  {
+    icon: Crown,
+    title: "عضویت در گروه VIP",
+    desc: "دسترسی به آفرها و رویدادهای اختصاصی",
+    details: [
+      "ورود به جمع محدودی از مهمانان دائمی کلینیک لمون با اولویت نوبت‌دهی و دسترسی زودهنگام به خدمات جدید.",
+      "تخفیف‌های اختصاصی روی سایر خدمات کلینیک، پکیج‌های فصلی و رویدادهای بستهٔ اعضا.",
+      "هدایا و خدمات سورپرایز در مناسبت‌های ویژه — تجربه‌ای فراتر از یک کلینیک معمولی.",
+    ],
+  },
+  {
+    icon: MessageCircleHeart,
+    title: "ارتباط مستقیم با پزشک",
+    desc: "مشاوره خصوصی و پیگیری شخصی",
+    details: [
+      "یک خط ارتباطی شخصی و مستقیم با پزشک معالج، بدون واسطهٔ منشی یا اپراتور.",
+      "پیگیری روند درمان، پاسخ به سؤالات بعد از خدمات و راهنمایی در شرایط خاص.",
+      "احساس امنیت و آرامش خاطر در هر مرحله — انگار پزشک شخصی خودتان همیشه در دسترس است.",
+    ],
+  },
 ];
 
 const steps = ["مزایا", "تماس", "آدرس", "تصویر", "تایید"];
@@ -34,6 +71,7 @@ function VipLanding() {
   const [step, setStep] = useState(0);
   const [selected, setSelected] = useState<number[]>([]);
   const [justChecked, setJustChecked] = useState<number | null>(null);
+  const [openBenefit, setOpenBenefit] = useState<number | null>(null);
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [file, setFile] = useState<File | null>(null);
