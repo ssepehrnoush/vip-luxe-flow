@@ -40,6 +40,7 @@ export type Database = {
           address: string
           admin_notes: string | null
           created_at: string
+          full_name: string | null
           id: string
           phone: string
           photo_path: string | null
@@ -54,6 +55,7 @@ export type Database = {
           address: string
           admin_notes?: string | null
           created_at?: string
+          full_name?: string | null
           id?: string
           phone: string
           photo_path?: string | null
@@ -68,6 +70,7 @@ export type Database = {
           address?: string
           admin_notes?: string | null
           created_at?: string
+          full_name?: string | null
           id?: string
           phone?: string
           photo_path?: string | null
