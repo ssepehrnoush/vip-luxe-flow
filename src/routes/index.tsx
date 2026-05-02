@@ -51,6 +51,66 @@ function VipLanding() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  // Auth + existing submission state
+  const [userId, setUserId] = useState<string | null>(null);
+  const [authChecking, setAuthChecking] = useState(true);
+  const [existingStatus, setExistingStatus] = useState<string | null>(null);
+  const [signingIn, setSigningIn] = useState(false);
+
+  // Check session on mount, and if user already submitted -> jump to step 4
+  useEffect(() => {
+    let mounted = true;
+
+    const loadForUser = async (uid: string) => {
+      const { data } = await supabase
+        .from("vip_submissions")
+        .select("ref_code, phone, address, selected_benefits, status")
+        .eq("user_id", uid)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!mounted) return;
+      if (data) {
+        setRefCode(data.ref_code);
+        setPhone(data.phone);
+        setAddress(data.address);
+        setSelected(data.selected_benefits ?? []);
+        setExistingStatus(data.status);
+        setStep(4);
+      }
+    };
+
+    supabase.auth.getSession().then(async ({ data }) => {
+      const uid = data.session?.user.id ?? null;
+      if (!mounted) return;
+      setUserId(uid);
+      if (uid) await loadForUser(uid);
+      setAuthChecking(false);
+    });
+
+    const { data: sub } = supabase.auth.onAuthStateChange(async (_e, session) => {
+      const uid = session?.user.id ?? null;
+      setUserId(uid);
+      if (uid) await loadForUser(uid);
+    });
+
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleGoogleSignIn = async () => {
+    setSigningIn(true);
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+    });
+    if (result.error) {
+      toast.error("ورود با گوگل ناموفق بود");
+      setSigningIn(false);
+    }
+  };
+
   // Cinematic parallax — background layers shift on scroll
   const { scrollY } = useScroll();
   const bgY = useTransform(scrollY, [0, 800], [0, -120]);
