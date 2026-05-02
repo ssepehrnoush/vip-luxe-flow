@@ -3,7 +3,8 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Syringe, ScanFace, Crown, MessageCircleHeart,
-  Phone, MapPin, UploadCloud, Check, ArrowLeft, Sparkles, X
+  Phone, MapPin, UploadCloud, Check, ArrowLeft, Sparkles, X,
+  AlertTriangle, Loader2, ImageIcon, Sun, Maximize2
 } from "lucide-react";
 import logo from "@/assets/lemon-logo.png";
 
