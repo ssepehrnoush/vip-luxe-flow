@@ -312,7 +312,7 @@
   .ambient-blob {
     position: absolute;
     border-radius: 50%;
-    filter: blur(110px);
+    filter: blur(70px);
     opacity: 0.55;
     pointer-events: none;
     will-change: transform;
