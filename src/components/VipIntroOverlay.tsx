@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, type PanInfo } from "framer-motion";
-import iconFoxEyes from "@/assets/vv-icon-foxeyes.png";
-import iconFace from "@/assets/vv-icon-face.png";
-import iconCrown from "@/assets/vv-icon-crown.png";
-import iconChat from "@/assets/vv-icon-chat.png";
+import iconFoxEyes from "@/assets/vv-icon-foxeyes.webp";
+import iconFace from "@/assets/vv-icon-face.webp";
+import iconCrown from "@/assets/vv-icon-crown.webp";
+import iconChat from "@/assets/vv-icon-chat.webp";
 
 type Benefit = {
   title: string;
