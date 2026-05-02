@@ -248,11 +248,13 @@ function VipLanding() {
         {/* Header */}
         <header dir="ltr" className="flex items-center justify-between mb-10">
           <div className="flex items-center gap-3">
-            <img
-              src={logo}
-              alt="کلینیک لمون"
-              className="h-12 w-auto neon-logo"
-            />
+            <div className="logo-frame">
+              <img
+                src={logo}
+                alt="کلینیک لمون"
+                className="h-10 w-auto neon-logo"
+              />
+            </div>
             <p className="text-sm font-semibold tracking-[0.25em] text-foreground">
               LEMON AESTHETIC CLINIC
             </p>
