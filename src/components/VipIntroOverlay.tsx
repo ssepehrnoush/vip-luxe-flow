@@ -94,7 +94,6 @@ function SwipeCard({
         dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
         dragElastic={0.6}
         onDragEnd={handleDragEnd}
-        style={{ x: isTop ? x : 0, rotate: isTop ? rotate : 0 }}
         whileTap={isTop ? { cursor: "grabbing" } : undefined}
         animate={
           isTop
