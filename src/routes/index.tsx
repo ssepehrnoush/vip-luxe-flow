@@ -6,7 +6,7 @@ import {
   Phone, MapPin, UploadCloud, Check, ArrowLeft, Sparkles, X,
   AlertTriangle, Loader2, ImageIcon, Sun, Maximize2, Hash, CalendarClock
 } from "lucide-react";
-import logo from "@/assets/lemon-logo.png";
+import logo from "@/assets/lemon-logo-neon.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -237,7 +237,11 @@ function VipLanding() {
         {/* Header */}
         <header dir="ltr" className="flex items-center justify-between mb-10">
           <div className="flex items-center gap-3">
-            <img src={logo} alt="کلینیک لمون" className="h-12 w-auto drop-shadow-sm" />
+            <img
+              src={logo}
+              alt="کلینیک لمون"
+              className="h-12 w-auto neon-logo"
+            />
             <p className="text-sm font-semibold tracking-[0.25em] text-foreground">
               LEMON AESTHETIC CLINIC
             </p>
