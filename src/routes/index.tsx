@@ -265,6 +265,10 @@ function VipLanding() {
 
   const submitToBackend = async () => {
     if (submitting) return;
+    if (!userId) {
+      toast.error("لطفاً ابتدا با گوگل وارد شوید");
+      return;
+    }
     setSubmitting(true);
     try {
       let photoPath: string | null = null;
@@ -278,6 +282,7 @@ function VipLanding() {
         photoPath = path;
       }
       const { error: insErr } = await supabase.from("vip_submissions").insert({
+        user_id: userId,
         ref_code: refCode,
         phone,
         address,
@@ -296,6 +301,7 @@ function VipLanding() {
           : null,
       });
       if (insErr) throw insErr;
+      setExistingStatus("new");
       setStep(4);
     } catch (e) {
       console.error("submit failed", e);
