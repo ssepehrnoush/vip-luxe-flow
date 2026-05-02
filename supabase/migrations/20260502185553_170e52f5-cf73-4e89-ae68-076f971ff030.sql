@@ -1,0 +1,1 @@
+ALTER TABLE public.vip_submissions ADD COLUMN IF NOT EXISTS full_name text;
