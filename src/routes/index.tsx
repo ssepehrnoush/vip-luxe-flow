@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Syringe, ScanFace, Crown, MessageCircleHeart,
@@ -29,7 +29,8 @@ const steps = ["مزایا", "تماس", "آدرس", "تصویر", "تایید"]
 
 function VipLanding() {
   const [step, setStep] = useState(0);
-  const [selected, setSelected] = useState<number[]>([0, 1, 2, 3]);
+  const [selected, setSelected] = useState<number[]>([]);
+  const [justChecked, setJustChecked] = useState<number | null>(null);
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -48,6 +49,23 @@ function VipLanding() {
     passed: boolean;
   } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-check benefits one-by-one within ~2s (every 500ms)
+  useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    benefits.forEach((_, i) => {
+      timers.push(
+        setTimeout(() => {
+          setSelected((s) => (s.includes(i) ? s : [...s, i]));
+          setJustChecked(i);
+          timers.push(setTimeout(() => {
+            setJustChecked((cur) => (cur === i ? null : cur));
+          }, 700));
+        }, 400 + i * 500)
+      );
+    });
+    return () => timers.forEach(clearTimeout);
+  }, []);
 
   const toggle = (i: number) =>
     setSelected((s) => (s.includes(i) ? s.filter((x) => x !== i) : [...s, i]));
