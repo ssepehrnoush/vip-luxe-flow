@@ -32,10 +32,14 @@ export const Route = createRootRoute({
       { title: "کلینیک لمون | عضویت VIP" },
       { name: "description", content: "تجربه‌ای اختصاصی از زیبایی، تحت نظر پزشک — عضویت در کلاب VIP کلینیک لمون" },
       { property: "og:title", content: "کلینیک لمون | عضویت VIP" },
-      { property: "og:description", content: "تجربه‌ای اختصاصی از زیبایی، تحت نظر پزشک" },
+      { property: "og:description", content: "تجربه‌ای اختصاصی از زیبایی، تحت نظر پزشک — عضویت در کلاب VIP کلینیک لمون" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "کلینیک لمون | عضویت VIP" },
+      { name: "twitter:description", content: "تجربه‌ای اختصاصی از زیبایی، تحت نظر پزشک — عضویت در کلاب VIP کلینیک لمون" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/eb2e0bd5-412d-484d-a11f-eadd9902fcb8/id-preview-f29544af--b10c4c3c-ae72-4b60-b4c3-876ba48ad371.lovable.app-1777726680178.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/eb2e0bd5-412d-484d-a11f-eadd9902fcb8/id-preview-f29544af--b10c4c3c-ae72-4b60-b4c3-876ba48ad371.lovable.app-1777726680178.png" },
     ],
     links: [
       {
