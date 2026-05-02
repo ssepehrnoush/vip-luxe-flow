@@ -122,7 +122,7 @@ function VipLanding() {
     const loadForUser = async (uid: string) => {
       const { data } = await supabase
         .from("vip_submissions")
-        .select("ref_code, phone, address, selected_benefits, status")
+        .select("ref_code, full_name, phone, address, selected_benefits, status")
         .eq("user_id", uid)
         .order("created_at", { ascending: false })
         .limit(1)
@@ -130,11 +130,12 @@ function VipLanding() {
       if (!mounted) return;
       if (data) {
         setRefCode(data.ref_code);
+        if (data.full_name) setFullName(data.full_name);
         setPhone(data.phone);
         setAddress(data.address);
         setSelected(data.selected_benefits ?? []);
         setExistingStatus(data.status);
-        setStep(4);
+        setStep(5);
       }
     };
 
