@@ -659,32 +659,127 @@ function VipLanding() {
               <CTA disabled={!canNext} onClick={next}>ادامه ثبت درخواست</CTA>
 
               <Dialog open={openBenefit !== null} onOpenChange={(o) => !o && setOpenBenefit(null)}>
-                <DialogContent className="glass border-[var(--gold)]/30 bg-[var(--background)]/95 backdrop-blur-xl max-w-md text-right" dir="rtl">
+                <DialogContent
+                  className="border-[var(--gold)]/40 max-w-[92vw] sm:max-w-md text-right p-0 overflow-hidden rounded-2xl shadow-[0_30px_80px_-20px_rgba(60,40,20,0.55),0_0_60px_-10px_oklch(0.82_0.14_88/0.45)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
+                  dir="rtl"
+                  style={{
+                    background:
+                      "linear-gradient(140deg, oklch(0.985 0.008 85 / 0.96) 0%, oklch(0.96 0.018 82 / 0.94) 60%, oklch(0.92 0.035 82 / 0.92) 100%)",
+                    backdropFilter: "blur(28px) saturate(140%)",
+                    WebkitBackdropFilter: "blur(28px) saturate(140%)",
+                    color: "oklch(0.22 0.015 60)",
+                  }}
+                >
+                  {/* gold key light */}
+                  <div
+                    className="pointer-events-none absolute -top-20 -left-20 w-56 h-56 rounded-full"
+                    style={{
+                      background:
+                        "radial-gradient(circle, oklch(0.95 0.10 90 / 0.55), transparent 65%)",
+                      filter: "blur(24px)",
+                    }}
+                  />
+                  <div
+                    className="pointer-events-none absolute -bottom-24 -right-16 w-64 h-64 rounded-full"
+                    style={{
+                      background:
+                        "radial-gradient(circle, oklch(0.98 0.02 85 / 0.55), transparent 70%)",
+                      filter: "blur(32px)",
+                    }}
+                  />
+                  <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-l from-transparent via-[var(--gold)] to-transparent opacity-90" />
+
                   {openBenefit !== null && (() => {
                     const b = benefits[openBenefit];
                     const Icon = b.icon;
+                    const renderRich = (text: string) => {
+                      const parts = text.split(/(\*\*[^*]+\*\*)/g);
+                      return parts.map((p, i) =>
+                        p.startsWith("**") && p.endsWith("**") ? (
+                          <strong
+                            key={i}
+                            className="font-extrabold"
+                            style={{ color: "oklch(0.45 0.10 75)" }}
+                          >
+                            {p.slice(2, -2)}
+                          </strong>
+                        ) : (
+                          <span key={i}>{p}</span>
+                        ),
+                      );
+                    };
                     return (
-                      <>
-                        <DialogHeader>
-                          <div className="flex items-center gap-3 mb-2">
-                            <div className="shrink-0 w-12 h-12 rounded-xl btn-gold flex items-center justify-center">
+                      <div className="relative p-6 sm:p-7">
+                        <DialogHeader className="space-y-3">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center"
+                              style={{
+                                background: "var(--gradient-gold)",
+                                boxShadow:
+                                  "0 8px 24px -6px oklch(0.82 0.14 88 / 0.6), inset 0 1px 0 rgba(255,255,255,0.5)",
+                              }}
+                            >
                               <Icon className="w-6 h-6 text-white" />
                             </div>
-                            <DialogTitle className="text-right text-xl gold-text">{b.title}</DialogTitle>
+                            <DialogTitle
+                              className="text-right text-xl sm:text-2xl font-bold leading-tight"
+                              style={{ color: "oklch(0.32 0.04 60)" }}
+                            >
+                              {b.title}
+                            </DialogTitle>
                           </div>
-                          <DialogDescription className="text-right text-sm text-muted-foreground">
-                            {b.desc}
+                          <DialogDescription
+                            className="text-right text-sm sm:text-[15px] leading-7"
+                            style={{ color: "oklch(0.35 0.02 60)" }}
+                          >
+                            {renderRich(b.intro ?? b.desc)}
                           </DialogDescription>
                         </DialogHeader>
-                        <ul className="space-y-3 mt-2">
+
+                        <div
+                          className="mt-5 h-px w-full"
+                          style={{
+                            background:
+                              "linear-gradient(to left, transparent, oklch(0.78 0.085 78 / 0.6), transparent)",
+                          }}
+                        />
+
+                        <ul className="space-y-3 mt-5">
                           {b.details.map((d, idx) => (
-                            <li key={idx} className="flex gap-3 items-start text-sm leading-relaxed">
-                              <span className="shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--gold)] shadow-[0_0_8px_var(--gold)]" />
-                              <span className="text-foreground/90">{d}</span>
-                            </li>
+                            <motion.li
+                              key={idx}
+                              initial={{ opacity: 0, x: 8 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ delay: 0.06 * idx + 0.1, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                              className="flex gap-3 items-start text-sm sm:text-[15px] leading-7"
+                            >
+                              <span
+                                className="shrink-0 mt-2 w-1.5 h-1.5 rounded-full"
+                                style={{
+                                  background: "var(--gold)",
+                                  boxShadow: "0 0 10px var(--gold), 0 0 4px var(--gold)",
+                                }}
+                              />
+                              <span style={{ color: "oklch(0.28 0.015 60)" }}>{renderRich(d)}</span>
+                            </motion.li>
                           ))}
                         </ul>
-                      </>
+
+                        <button
+                          type="button"
+                          onClick={() => setOpenBenefit(null)}
+                          className="mt-6 w-full rounded-xl py-3 text-sm font-semibold tracking-wide transition-transform active:scale-[0.98]"
+                          style={{
+                            background: "var(--gradient-gold)",
+                            color: "white",
+                            boxShadow:
+                              "0 10px 24px -8px oklch(0.82 0.14 88 / 0.55), inset 0 1px 0 rgba(255,255,255,0.4)",
+                          }}
+                        >
+                          متوجه شدم
+                        </button>
+                      </div>
                     );
                   })()}
                 </DialogContent>
