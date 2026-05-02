@@ -430,6 +430,14 @@
   }
 }
 
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .dust, .light-beam, .ambient-blob, .light-streak,
+  .breathe, .neon-logo, .camera-sweep, .anim-light-sweep {
+    animation: none !important;
+  }
+}
+
 /* =========================================================
    High Contrast mode (toggleable via .hc on <html>)
    Boosts gold tokens, text, borders, and icon shadows for
