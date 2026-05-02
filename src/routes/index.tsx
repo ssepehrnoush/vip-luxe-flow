@@ -235,15 +235,14 @@ function VipLanding() {
 
       <div className="relative z-10 mx-auto max-w-3xl px-5 pt-8 pb-20 sm:pt-14 cinema-fade">
         {/* Header */}
-        <header className="flex items-center justify-between mb-10">
+        <header dir="ltr" className="flex items-center justify-between mb-10">
           <div className="flex items-center gap-3">
             <img src={logo} alt="کلینیک لمون" className="h-12 w-auto drop-shadow-sm" />
-            <div className="hidden sm:block">
-              <p className="text-xs text-muted-foreground tracking-widest">LEMON AESTHETIC</p>
-              <p className="text-sm font-semibold">کلینیک زیبایی لمون</p>
-            </div>
+            <p className="text-sm font-semibold tracking-[0.25em] text-foreground">
+              LEMON AESTHETIC
+            </p>
           </div>
-          <div className="glass rounded-full px-4 py-1.5 flex items-center gap-2 text-xs">
+          <div className="glass rounded-full px-4 py-1.5 flex items-center gap-2 text-xs" dir="rtl">
             <Sparkles className="w-3.5 h-3.5 text-[var(--gold-deep)]" />
             <span className="font-medium">پذیرش VIP</span>
           </div>
