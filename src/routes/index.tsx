@@ -180,9 +180,12 @@ function VipLanding() {
   return (
     <main className="relative min-h-screen overflow-hidden">
       {/* Ambient luxury blobs */}
-      <div className="ambient-blob bg-[oklch(0.88_0.14_88)] w-[520px] h-[520px] -top-40 -right-40" />
-      <div className="ambient-blob bg-[oklch(0.92_0.08_60)] w-[600px] h-[600px] top-1/3 -left-60" />
-      <div className="ambient-blob bg-[oklch(0.85_0.1_75)] w-[400px] h-[400px] bottom-0 right-1/4 opacity-30" />
+      {/* Champagne gold ambient — top right */}
+      <div className="ambient-blob bg-[oklch(0.90_0.10_88)] w-[560px] h-[560px] -top-48 -right-48" />
+      {/* Warm peach/beige ambient — bottom left */}
+      <div className="ambient-blob bg-[oklch(0.91_0.07_55)] w-[640px] h-[640px] bottom-[-180px] -left-56" />
+      {/* Faint sand accent center */}
+      <div className="ambient-blob bg-[oklch(0.88_0.06_75)] w-[420px] h-[420px] top-1/2 right-1/3 opacity-25" />
 
       <div className="relative z-10 mx-auto max-w-3xl px-5 pt-8 pb-20 sm:pt-14">
         {/* Header */}
