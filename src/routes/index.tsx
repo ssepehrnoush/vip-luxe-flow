@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import logo from "@/assets/lemon-logo-neon.webp";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
