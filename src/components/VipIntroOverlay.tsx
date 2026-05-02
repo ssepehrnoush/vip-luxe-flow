@@ -14,15 +14,15 @@ type Benefit = {
 
 const BENEFITS: Benefit[] = [
   {
-    tag: "هدیه ورود",
-    title: "بوتاکس VIP",
-    subtitle: "طراحی نگاه روباهی (Fox Eyes) — هدیه اختصاصی عضویت",
+    tag: "هدیه عضویت شما",
+    title: "یک دوز کامل بوتاکس",
+    subtitle: "FOX EYE / CAT EYE",
     icon: iconFoxEyes,
   },
   {
-    tag: "تحلیل هوشمند",
-    title: "آنالیز چهره",
-    subtitle: "ارزیابی پوست با هوش مصنوعی و گزارش پزشکی اختصاصی",
+    tag: "ارزیابی تخصصی صورت",
+    title: "ارزیابی تخصصی صورت",
+    subtitle: "با طراحی روتین مراقبتی",
     icon: iconFace,
   },
   {
@@ -384,7 +384,7 @@ export default function VipIntroOverlay() {
               مراسم پذیرش شما
             </h2>
             <p className="text-xs mt-1" style={{ color: "oklch(0.85 0.03 80 / 0.85)" }}>
-              برای ورود، هر امتیاز را با کشیدن کارت بپذیرید
+              برای ورود، کارت ها را ورق بزنید
             </p>
           </motion.div>
 
