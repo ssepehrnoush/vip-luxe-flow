@@ -608,15 +608,37 @@ function VipLanding() {
                       key={i}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1 * i + 0.3 }}
-                      whileHover={{ scale: 1.02, y: -3 }}
-                      whileTap={{ scale: 0.98 }}
+                      transition={{ delay: 0.1 * i + 0.3, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                      whileHover={{
+                        scale: 1.03,
+                        y: -5,
+                        transition: { type: "spring", stiffness: 320, damping: 22 },
+                      }}
+                      whileTap={{
+                        scale: 0.96,
+                        y: 0,
+                        transition: { type: "spring", stiffness: 600, damping: 18 },
+                      }}
                       onClick={() => setOpenBenefit(i)}
                       aria-label={`جزئیات ${b.title}`}
-                      className={`glass glass-glow card-halo breathe rounded-2xl p-5 text-right relative overflow-hidden group transition-all duration-500 cursor-pointer ${
+                      className={`benefit-card glass glass-glow card-halo breathe rounded-2xl p-5 text-right relative overflow-hidden group transition-shadow duration-500 cursor-pointer hover:shadow-[0_24px_60px_-18px_oklch(0.55_0.12_75/0.55),0_0_50px_-10px_oklch(0.82_0.14_88/0.45)] ${
                         isSel ? "ring-2 ring-[var(--gold)] shadow-[0_0_40px_oklch(0.82_0.14_88/0.4)]" : ""
                       }`}
                     >
+                      {/* luxury hover glow sweep */}
+                      <span
+                        aria-hidden
+                        className="benefit-card__sweep pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100"
+                      />
+                      {/* gold halo ring on hover */}
+                      <span
+                        aria-hidden
+                        className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                        style={{
+                          boxShadow:
+                            "inset 0 0 0 1px oklch(0.82 0.14 88 / 0.55), inset 0 0 30px oklch(0.92 0.10 88 / 0.18)",
+                        }}
+                      />
                       {isSel && (
                         <span className="shine-sweep absolute inset-0 rounded-2xl pointer-events-none" />
                       )}
