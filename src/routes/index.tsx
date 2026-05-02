@@ -35,15 +35,115 @@ function VipLanding() {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [quality, setQuality] = useState<{
+    width: number; height: number; brightness: number;
+    sharpness: number; sizeKB: number;
+    checks: { label: string; ok: boolean; icon: "res" | "light" | "sharp" | "size"; hint?: string }[];
+    score: number;
+    passed: boolean;
+  } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const toggle = (i: number) =>
     setSelected((s) => (s.includes(i) ? s.filter((x) => x !== i) : [...s, i]));
 
-  const onFile = (f: File | null) => {
+  const analyzeImage = (url: string, f: File) =>
+    new Promise<NonNullable<typeof quality>>((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const w = (canvas.width = Math.min(img.naturalWidth, 320));
+        const h = (canvas.height = Math.round((img.naturalHeight / img.naturalWidth) * w));
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return reject(new Error("no ctx"));
+        ctx.drawImage(img, 0, 0, w, h);
+        const { data } = ctx.getImageData(0, 0, w, h);
+        // Brightness (perceived luma 0..255)
+        let sum = 0;
+        const lumas = new Float32Array((data.length / 4) | 0);
+        for (let i = 0, j = 0; i < data.length; i += 4, j++) {
+          const l = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+          lumas[j] = l;
+          sum += l;
+        }
+        const brightness = sum / lumas.length;
+        // Sharpness via Laplacian variance (simplified)
+        let sVar = 0; let sMean = 0; let n = 0;
+        for (let y = 1; y < h - 1; y++) {
+          for (let x = 1; x < w - 1; x++) {
+            const i = y * w + x;
+            const lap =
+              -4 * lumas[i] + lumas[i - 1] + lumas[i + 1] + lumas[i - w] + lumas[i + w];
+            sMean += lap; n++;
+          }
+        }
+        sMean /= n;
+        for (let y = 1; y < h - 1; y++) {
+          for (let x = 1; x < w - 1; x++) {
+            const i = y * w + x;
+            const lap =
+              -4 * lumas[i] + lumas[i - 1] + lumas[i + 1] + lumas[i - w] + lumas[i + w];
+            sVar += (lap - sMean) ** 2;
+          }
+        }
+        const sharpness = sVar / n;
+
+        const W = img.naturalWidth, H = img.naturalHeight;
+        const sizeKB = f.size / 1024;
+        const resOk = Math.min(W, H) >= 600;
+        const lightOk = brightness >= 70 && brightness <= 210;
+        const sharpOk = sharpness >= 80;
+        const sizeOk = sizeKB >= 60 && sizeKB <= 8 * 1024;
+
+        const checks = [
+          { label: `وضوح ${W}×${H}`, ok: resOk, icon: "res" as const,
+            hint: resOk ? "وضوح مناسب" : "حداقل ۶۰۰ پیکسل لازم است" },
+          { label: brightness < 70 ? "نور کم" : brightness > 210 ? "نور زیاد" : "نور مناسب",
+            ok: lightOk, icon: "light" as const,
+            hint: lightOk ? "روشنایی متعادل" : "در نور یکنواخت طبیعی عکس بگیرید" },
+          { label: sharpOk ? "تصویر واضح" : "کمی تار",
+            ok: sharpOk, icon: "sharp" as const,
+            hint: sharpOk ? "فوکوس مناسب" : "دوربین را ثابت نگه دارید" },
+          { label: `${sizeKB < 1024 ? sizeKB.toFixed(0) + " KB" : (sizeKB / 1024).toFixed(1) + " MB"}`,
+            ok: sizeOk, icon: "size" as const,
+            hint: sizeOk ? "حجم مناسب" : "حجم تصویر مناسب نیست" },
+        ];
+        const passedCount = checks.filter((c) => c.ok).length;
+        const score = Math.round((passedCount / checks.length) * 100);
+        resolve({
+          width: W, height: H, brightness, sharpness, sizeKB,
+          checks, score, passed: passedCount >= 3 && resOk,
+        });
+      };
+      img.onerror = () => reject(new Error("load fail"));
+      img.src = url;
+    });
+
+  const onFile = async (f: File | null) => {
     if (!f) return;
+    if (!f.type.startsWith("image/")) return;
+    const url = URL.createObjectURL(f);
     setFile(f);
-    setPreview(URL.createObjectURL(f));
+    setPreview(url);
+    setQuality(null);
+    setAnalyzing(true);
+    try {
+      const q = await analyzeImage(url, f);
+      setQuality(q);
+    } catch {
+      setQuality(null);
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
+  const clearFile = () => {
+    if (preview) URL.revokeObjectURL(preview);
+    setFile(null);
+    setPreview(null);
+    setQuality(null);
+    setAnalyzing(false);
   };
 
   const next = () => setStep((s) => Math.min(s + 1, 4));
@@ -53,7 +153,7 @@ function VipLanding() {
     (step === 0 && selected.length > 0) ||
     (step === 1 && /^09\d{9}$/.test(phone)) ||
     (step === 2 && address.trim().length > 8) ||
-    (step === 3 && !!file);
+    (step === 3 && !!file && !analyzing && !!quality?.passed);
 
   return (
     <main className="relative min-h-screen overflow-hidden">
