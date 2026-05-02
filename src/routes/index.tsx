@@ -574,3 +574,183 @@ function Nav({ onBack, onNext, canNext, nextLabel = "ادامه" }: {
     </div>
   );
 }
+
+function SuccessScreen({
+  refCode, phone, address, preview, selected, quality,
+}: {
+  refCode: string; phone: string; address: string;
+  preview: string | null; selected: number[];
+  quality: { score: number } | null;
+}) {
+  const today = new Date().toLocaleDateString("fa-IR", {
+    year: "numeric", month: "long", day: "numeric",
+  });
+  const maskedPhone = phone.replace(/^(\d{4})(\d{3})(\d{4})$/, "$1•••$3");
+  const shortAddr = address.length > 60 ? address.slice(0, 60) + "…" : address;
+
+  return (
+    <motion.section
+      key="done"
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      className="max-w-xl mx-auto text-center py-4 relative"
+    >
+      {/* Sparkle particles */}
+      {Array.from({ length: 12 }).map((_, i) => (
+        <motion.span
+          key={i}
+          initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
+          animate={{
+            opacity: [0, 1, 0],
+            scale: [0, 1, 0.4],
+            x: Math.cos((i / 12) * Math.PI * 2) * (90 + (i % 3) * 20),
+            y: Math.sin((i / 12) * Math.PI * 2) * (90 + (i % 3) * 20),
+          }}
+          transition={{ duration: 1.6, delay: 0.4 + i * 0.04, ease: "easeOut" }}
+          className="absolute left-1/2 top-[72px] w-1.5 h-1.5 rounded-full bg-[var(--gold)] shadow-[0_0_12px_var(--gold)]"
+        />
+      ))}
+
+      {/* Animated badge */}
+      <motion.div
+        initial={{ scale: 0, rotate: -30 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ type: "spring", stiffness: 180, damping: 14, delay: 0.15 }}
+        className="relative w-32 h-32 mx-auto mb-8"
+      >
+        <motion.div
+          className="absolute -inset-6 rounded-full"
+          style={{ background: "radial-gradient(circle, oklch(0.82 0.14 88 / 0.5), transparent 70%)" }}
+          animate={{ scale: [1, 1.15, 1], opacity: [0.6, 1, 0.6] }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute inset-0 rounded-full btn-gold"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
+        />
+        <div className="absolute inset-[6px] rounded-full bg-[var(--ivory)] flex items-center justify-center">
+          <motion.div
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: 1, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            <Check className="w-14 h-14 text-[var(--gold-deep)]" strokeWidth={3} />
+          </motion.div>
+        </div>
+      </motion.div>
+
+      <motion.p
+        initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
+        className="text-xs tracking-[0.4em] text-[var(--gold-deep)] mb-3"
+      >
+        APPLICATION RECEIVED
+      </motion.p>
+      <motion.h2
+        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
+        className="text-3xl sm:text-4xl font-black mb-3 leading-tight"
+      >
+        درخواست شما <span className="gold-text">ثبت شد</span>
+      </motion.h2>
+      <motion.p
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
+        className="text-muted-foreground max-w-md mx-auto leading-relaxed text-sm sm:text-base"
+      >
+        تیم پذیرش VIP لمون پرونده‌ی شما را بررسی می‌کند و ظرف ۲۴ ساعت آینده با شما تماس می‌گیرد.
+      </motion.p>
+
+      {/* Summary card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.85, duration: 0.6 }}
+        className="glass rounded-3xl p-5 sm:p-6 mt-8 text-right relative overflow-hidden"
+      >
+        <div className="absolute top-0 right-0 left-0 h-px bg-gradient-to-l from-transparent via-[var(--gold)] to-transparent" />
+
+        {/* Header row */}
+        <div className="flex items-center justify-between gap-3 mb-5">
+          <div className="flex items-center gap-3">
+            {preview ? (
+              <div className="relative">
+                <img src={preview} alt="" className="w-14 h-14 rounded-2xl object-cover ring-2 ring-[var(--gold)]" />
+                {quality && (
+                  <span className="absolute -bottom-1 -left-1 w-6 h-6 rounded-full btn-gold flex items-center justify-center text-[9px] font-bold text-white">
+                    {quality.score}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div className="w-14 h-14 rounded-2xl bg-[var(--gold-soft)]/60 flex items-center justify-center">
+                <Crown className="w-6 h-6 text-[var(--gold-deep)]" />
+              </div>
+            )}
+            <div>
+              <p className="text-[10px] text-muted-foreground tracking-widest">VIP MEMBER</p>
+              <p className="font-bold text-sm">عضو محترم لمون</p>
+            </div>
+          </div>
+          <div className="text-left">
+            <p className="text-[10px] text-muted-foreground tracking-widest">REF</p>
+            <p className="font-mono font-bold text-xs gold-text" dir="ltr">{refCode}</p>
+          </div>
+        </div>
+
+        <div className="h-px bg-[var(--border)] mb-5" />
+
+        {/* Info rows */}
+        <ul className="space-y-3.5 text-sm">
+          <SummaryRow icon={<Phone className="w-3.5 h-3.5" />} label="شماره تماس">
+            <span dir="ltr" className="font-medium">{maskedPhone || phone}</span>
+          </SummaryRow>
+          <SummaryRow icon={<MapPin className="w-3.5 h-3.5" />} label="آدرس">
+            <span className="font-medium">{shortAddr}</span>
+          </SummaryRow>
+          <SummaryRow icon={<Sparkles className="w-3.5 h-3.5" />} label="مزایای انتخابی">
+            <div className="flex flex-wrap gap-1.5 justify-end">
+              {selected.map((i) => (
+                <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--gold-soft)]/60 text-[var(--gold-deep)] font-medium">
+                  {benefits[i].title}
+                </span>
+              ))}
+            </div>
+          </SummaryRow>
+          <SummaryRow icon={<CalendarClock className="w-3.5 h-3.5" />} label="تاریخ ثبت">
+            <span className="font-medium">{today}</span>
+          </SummaryRow>
+          <SummaryRow icon={<Hash className="w-3.5 h-3.5" />} label="وضعیت">
+            <span className="inline-flex items-center gap-1.5 text-[var(--gold-deep)] font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--gold-deep)] animate-pulse" />
+              در حال بررسی
+            </span>
+          </SummaryRow>
+        </ul>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.05 }}
+        className="glass rounded-2xl p-4 mt-6 inline-flex items-center gap-3"
+      >
+        <Crown className="w-5 h-5 text-[var(--gold-deep)]" />
+        <span className="text-sm">به خانواده VIP لمون خوش آمدید</span>
+      </motion.div>
+    </motion.section>
+  );
+}
+
+function SummaryRow({ icon, label, children }: {
+  icon: React.ReactNode; label: string; children: React.ReactNode;
+}) {
+  return (
+    <li className="flex items-start justify-between gap-4">
+      <div className="flex items-center gap-2 text-muted-foreground shrink-0">
+        <span className="w-6 h-6 rounded-lg bg-[var(--gold-soft)]/50 text-[var(--gold-deep)] flex items-center justify-center">
+          {icon}
+        </span>
+        <span className="text-xs">{label}</span>
+      </div>
+      <div className="text-right min-w-0 flex-1">{children}</div>
+    </li>
+  );
+}
