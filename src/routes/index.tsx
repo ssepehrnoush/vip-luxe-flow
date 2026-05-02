@@ -1196,18 +1196,22 @@ function FloatingInput({
   );
 }
 
-function Nav({ onBack, onNext, canNext, nextLabel = "ادامه" }: {
-  onBack: () => void; onNext: () => void; canNext: boolean; nextLabel?: string;
+function Nav({ onBack, onNext, canNext, nextLabel = "ادامه", backDisabled = false }: {
+  onBack: () => void; onNext: () => void; canNext: boolean; nextLabel?: string; backDisabled?: boolean;
 }) {
   return (
     <div className="flex items-center justify-between gap-4 pt-4">
-      <button
-        onClick={onBack}
-        className="glass rounded-2xl px-5 py-3.5 text-sm font-medium flex items-center gap-2 hover:scale-105 transition-transform"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        بازگشت
-      </button>
+      {backDisabled ? (
+        <span aria-hidden className="opacity-0 pointer-events-none px-5 py-3.5 text-sm" />
+      ) : (
+        <button
+          onClick={onBack}
+          className="glass rounded-2xl px-5 py-3.5 text-sm font-medium flex items-center gap-2 hover:scale-105 transition-transform"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          بازگشت
+        </button>
+      )}
       <CTA onClick={onNext} disabled={!canNext}>{nextLabel}</CTA>
     </div>
   );
