@@ -6,7 +6,7 @@ import {
   Phone, MapPin, UploadCloud, Check, ArrowLeft, Sparkles, X,
   AlertTriangle, Loader2, ImageIcon, Sun, Maximize2, Hash, CalendarClock
 } from "lucide-react";
-import logo from "@/assets/lemon-logo-neon.png";
+import logo from "@/assets/lemon-logo-neon.webp";
 
 export const Route = createFileRoute("/")({
   head: () => ({
