@@ -522,7 +522,7 @@ function VipLanding() {
         </div>
 
         <AnimatePresence mode="wait">
-          {!authChecking && !userId && step < 4 && (
+          {!authChecking && !userId && step < 5 && (
             <motion.section
               key="signin-gate"
               initial={{ opacity: 0, y: 20 }}
