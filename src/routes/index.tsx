@@ -403,6 +403,7 @@ function VipLanding() {
       const { error: insErr } = await supabase.from("vip_submissions").insert({
         user_id: userId,
         ref_code: refCode,
+        full_name: fullName.trim(),
         phone,
         address,
         selected_benefits: selected,
@@ -421,7 +422,7 @@ function VipLanding() {
       });
       if (insErr) throw insErr;
       setExistingStatus("new");
-      setStep(4);
+      setStep(5);
     } catch (e) {
       console.error("submit failed", e);
       toast.error("ارسال درخواست ناموفق بود. لطفاً دوباره تلاش کنید.");
