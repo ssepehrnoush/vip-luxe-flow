@@ -795,11 +795,12 @@ function Nav({ onBack, onNext, canNext, nextLabel = "ادامه" }: {
 }
 
 function SuccessScreen({
-  refCode, phone, address, preview, selected, quality,
+  refCode, phone, address, preview, selected, quality, status,
 }: {
   refCode: string; phone: string; address: string;
   preview: string | null; selected: number[];
   quality: { score: number } | null;
+  status?: string | null;
 }) {
   const today = new Date().toLocaleDateString("fa-IR", {
     year: "numeric", month: "long", day: "numeric",
@@ -939,10 +940,22 @@ function SuccessScreen({
             <span className="font-medium">{today}</span>
           </SummaryRow>
           <SummaryRow icon={<Hash className="w-3.5 h-3.5" />} label="وضعیت">
-            <span className="inline-flex items-center gap-1.5 text-[var(--gold-deep)] font-bold">
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--gold-deep)] animate-pulse" />
-              در حال بررسی
-            </span>
+            {status === "approved" ? (
+              <span className="inline-flex items-center gap-1.5 text-emerald-700 font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                تایید شد
+              </span>
+            ) : status === "rejected" ? (
+              <span className="inline-flex items-center gap-1.5 text-rose-700 font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-600" />
+                رد شد
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 text-[var(--gold-deep)] font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--gold-deep)] animate-pulse" />
+                در حال بررسی
+              </span>
+            )}
           </SummaryRow>
         </ul>
       </motion.div>
