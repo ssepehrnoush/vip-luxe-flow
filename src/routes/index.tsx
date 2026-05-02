@@ -239,7 +239,7 @@ function VipLanding() {
           <div className="flex items-center gap-3">
             <img src={logo} alt="کلینیک لمون" className="h-12 w-auto drop-shadow-sm" />
             <p className="text-sm font-semibold tracking-[0.25em] text-foreground">
-              LEMON AESTHETIC
+              LEMON AESTHETIC CLINIC
             </p>
           </div>
           <div className="glass rounded-full px-4 py-1.5 flex items-center gap-2 text-xs" dir="rtl">
