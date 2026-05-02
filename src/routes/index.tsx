@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Syringe, ScanFace, Crown, MessageCircleHeart,
   Phone, MapPin, UploadCloud, Check, ArrowLeft, Sparkles, X,
-  AlertTriangle, Loader2, ImageIcon, Sun, Maximize2
+  AlertTriangle, Loader2, ImageIcon, Sun, Maximize2, Hash, CalendarClock
 } from "lucide-react";
 import logo from "@/assets/lemon-logo.png";
 
@@ -36,6 +36,10 @@ function VipLanding() {
   const [preview, setPreview] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
+  const [refCode] = useState(() =>
+    "VIP-" + Math.random().toString(36).slice(2, 6).toUpperCase() +
+    "-" + Math.random().toString(36).slice(2, 6).toUpperCase()
+  );
   const [quality, setQuality] = useState<{
     width: number; height: number; brightness: number;
     sharpness: number; sizeKB: number;
