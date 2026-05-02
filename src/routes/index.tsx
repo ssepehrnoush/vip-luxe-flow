@@ -909,7 +909,7 @@ function VipLanding() {
             </motion.section>
           )}
 
-          {step === 1 && (
+          {step === 2 && (
             <StepShell key="phone" title="شماره تماس خود را وارد کنید" subtitle="جهت هماهنگی توسط منشی اختصاصی">
               <FloatingInput
                 icon={<Phone className="w-5 h-5" />}
@@ -924,7 +924,7 @@ function VipLanding() {
             </StepShell>
           )}
 
-          {step === 2 && (
+          {step === 3 && (
             <StepShell key="addr" title="آدرس خود را وارد کنید" subtitle="برای ارسال هدیه و دعوتنامه اختصاصی">
               <FloatingInput
                 icon={<MapPin className="w-5 h-5" />}
@@ -938,7 +938,7 @@ function VipLanding() {
             </StepShell>
           )}
 
-          {step === 3 && (
+          {step === 4 && (
             <StepShell key="img" title="ارسال تصویر صورت" subtitle="ترجیحاً بدون میکاپ سنگین، به‌صورت واضح و طبیعی">
               <input
                 ref={inputRef}
@@ -1098,9 +1098,10 @@ function VipLanding() {
             </StepShell>
           )}
 
-          {step === 4 && (
+          {step === 5 && (
             <SuccessScreen
               refCode={refCode}
+              fullName={fullName}
               phone={phone}
               address={address}
               preview={preview}
