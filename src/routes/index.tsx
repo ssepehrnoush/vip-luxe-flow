@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Syringe, ScanFace, Crown, MessageCircleHeart,
@@ -29,7 +29,8 @@ const steps = ["مزایا", "تماس", "آدرس", "تصویر", "تایید"]
 
 function VipLanding() {
   const [step, setStep] = useState(0);
-  const [selected, setSelected] = useState<number[]>([0, 1, 2, 3]);
+  const [selected, setSelected] = useState<number[]>([]);
+  const [justChecked, setJustChecked] = useState<number | null>(null);
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -48,6 +49,23 @@ function VipLanding() {
     passed: boolean;
   } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-check benefits one-by-one within ~2s (every 500ms)
+  useEffect(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    benefits.forEach((_, i) => {
+      timers.push(
+        setTimeout(() => {
+          setSelected((s) => (s.includes(i) ? s : [...s, i]));
+          setJustChecked(i);
+          timers.push(setTimeout(() => {
+            setJustChecked((cur) => (cur === i ? null : cur));
+          }, 700));
+        }, 400 + i * 500)
+      );
+    });
+    return () => timers.forEach(clearTimeout);
+  }, []);
 
   const toggle = (i: number) =>
     setSelected((s) => (s.includes(i) ? s.filter((x) => x !== i) : [...s, i]));
@@ -262,10 +280,30 @@ function VipLanding() {
                           <h3 className="font-bold text-base sm:text-lg mb-1">{b.title}</h3>
                           <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{b.desc}</p>
                         </div>
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                        <div className={`relative w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
                           isSel ? "border-[var(--gold)] bg-[var(--gold)]" : "border-[var(--border)]"
                         }`}>
-                          {isSel && <Check className="w-3 h-3 text-white" />}
+                          <AnimatePresence>
+                            {isSel && justChecked === i && (
+                              <motion.span
+                                key="ring"
+                                initial={{ scale: 0.6, opacity: 0.9 }}
+                                animate={{ scale: 2.6, opacity: 0 }}
+                                transition={{ duration: 0.7, ease: "easeOut" }}
+                                className="absolute inset-0 rounded-full bg-[var(--gold)]"
+                              />
+                            )}
+                          </AnimatePresence>
+                          {isSel && (
+                            <motion.span
+                              initial={justChecked === i ? { scale: 2.4, rotate: -20 } : false}
+                              animate={{ scale: 1, rotate: 0 }}
+                              transition={{ type: "spring", stiffness: 260, damping: 18, delay: 0.05 }}
+                              className="relative flex items-center justify-center"
+                            >
+                              <Check className="w-3 h-3 text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.9)]" />
+                            </motion.span>
+                          )}
                         </div>
                       </div>
                     </motion.button>
