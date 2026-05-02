@@ -687,6 +687,7 @@ function VipLanding() {
               preview={preview}
               selected={selected}
               quality={quality}
+              status={existingStatus}
             />
           )}
         </AnimatePresence>
