@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import {
@@ -31,6 +31,7 @@ const benefits = [
 const steps = ["مزایا", "تماس", "آدرس", "تصویر", "تایید"];
 
 function VipLanding() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [selected, setSelected] = useState<number[]>([]);
   const [justChecked, setJustChecked] = useState<number | null>(null);
@@ -61,6 +62,19 @@ function VipLanding() {
   useEffect(() => {
     let mounted = true;
 
+    const checkAdminAndRedirect = async (uid: string): Promise<boolean> => {
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", uid);
+      const isAdmin = (roles ?? []).some((r) => r.role === "admin");
+      if (isAdmin) {
+        navigate({ to: "/admin" });
+        return true;
+      }
+      return false;
+    };
+
     const loadForUser = async (uid: string) => {
       const { data } = await supabase
         .from("vip_submissions")
@@ -84,14 +98,22 @@ function VipLanding() {
       const uid = data.session?.user.id ?? null;
       if (!mounted) return;
       setUserId(uid);
-      if (uid) await loadForUser(uid);
+      if (uid) {
+        const redirected = await checkAdminAndRedirect(uid);
+        if (redirected) return;
+        await loadForUser(uid);
+      }
       setAuthChecking(false);
     });
 
     const { data: sub } = supabase.auth.onAuthStateChange(async (_e, session) => {
       const uid = session?.user.id ?? null;
       setUserId(uid);
-      if (uid) await loadForUser(uid);
+      if (uid) {
+        const redirected = await checkAdminAndRedirect(uid);
+        if (redirected) return;
+        await loadForUser(uid);
+      }
     });
 
     return () => {
