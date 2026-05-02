@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import logo from "@/assets/lemon-logo-neon.webp";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
@@ -205,6 +206,26 @@ function VipLanding() {
     }
     // onAuthStateChange will pick this up and redirect / load data.
     setSigningIn(false);
+  };
+
+  // Google sign-in via Lovable Cloud managed OAuth.
+  const handleGoogleLogin = async () => {
+    setSigningIn(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+      if (result.redirected) return; // browser navigates away
+      if (result.error) {
+        toast.error("ورود با گوگل ناموفق بود");
+        setSigningIn(false);
+        return;
+      }
+      // session set — onAuthStateChange will handle the rest
+    } catch {
+      toast.error("ورود با گوگل ناموفق بود");
+      setSigningIn(false);
+    }
   };
 
   // Cinematic parallax — background layers shift on scroll
@@ -553,8 +574,38 @@ function VipLanding() {
                 </button>
               </form>
 
+              {/* Divider */}
+              <div className="max-w-sm mx-auto flex items-center gap-3 my-5">
+                <span className="flex-1 h-px bg-gradient-to-l from-transparent via-[var(--gold)]/40 to-transparent" />
+                <span className="text-[11px] text-muted-foreground tracking-wider">یا</span>
+                <span className="flex-1 h-px bg-gradient-to-r from-transparent via-[var(--gold)]/40 to-transparent" />
+              </div>
+
+              {/* Google sign-in */}
+              <div className="max-w-sm mx-auto">
+                <button
+                  type="button"
+                  onClick={handleGoogleLogin}
+                  disabled={signingIn}
+                  className="glass glass-glow rounded-2xl py-3.5 px-6 w-full inline-flex items-center justify-center gap-3 font-semibold hover:scale-[1.02] transition disabled:opacity-40 disabled:cursor-not-allowed border border-[var(--gold)]/30"
+                  aria-label="ورود با حساب گوگل"
+                >
+                  {signingIn ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <svg className="w-5 h-5" viewBox="0 0 48 48" aria-hidden>
+                      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/>
+                      <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.5 6.1 29.5 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+                      <path fill="#4CAF50" d="M24 44c5.4 0 10.3-2.1 14-5.5l-6.5-5.3c-2 1.4-4.6 2.3-7.5 2.3-5.3 0-9.7-3.4-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/>
+                      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.5 5.3C41.4 36 44 30.5 44 24c0-1.3-.1-2.4-.4-3.5z"/>
+                    </svg>
+                  )}
+                  ورود با گوگل
+                </button>
+              </div>
+
               <p className="text-[11px] text-muted-foreground mt-6">
-                شماره شما فقط برای حفظ پیشرفت استفاده می‌شود
+                شماره یا حساب گوگل شما فقط برای حفظ پیشرفت استفاده می‌شود
               </p>
             </motion.section>
           )}
