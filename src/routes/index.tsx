@@ -558,8 +558,8 @@ function VipLanding() {
           )}
         </AnimatePresence>
 
-        <footer className="text-center text-xs text-muted-foreground mt-16">
-          © Lemon Aesthetic Center — Tehran
+        <footer className="text-center text-[11px] tracking-[0.4em] text-muted-foreground mt-16">
+          TEHRAN PRIVATE SUITE
         </footer>
       </div>
     </main>
