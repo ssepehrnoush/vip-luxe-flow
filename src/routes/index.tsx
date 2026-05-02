@@ -7,6 +7,8 @@ import {
   AlertTriangle, Loader2, ImageIcon, Sun, Maximize2, Hash, CalendarClock
 } from "lucide-react";
 import logo from "@/assets/lemon-logo-neon.webp";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -46,6 +48,7 @@ function VipLanding() {
     passed: boolean;
   } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   // Cinematic parallax — background layers shift on scroll
   const { scrollY } = useScroll();
@@ -198,6 +201,48 @@ function VipLanding() {
 
   const next = () => setStep((s) => Math.min(s + 1, 4));
   const back = () => setStep((s) => Math.max(s - 1, 0));
+
+  const submitToBackend = async () => {
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      let photoPath: string | null = null;
+      if (file) {
+        const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+        const path = `submissions/${refCode}-${Date.now()}.${ext}`;
+        const { error: upErr } = await supabase.storage
+          .from("vip-photos")
+          .upload(path, file, { contentType: file.type, upsert: false });
+        if (upErr) throw upErr;
+        photoPath = path;
+      }
+      const { error: insErr } = await supabase.from("vip_submissions").insert({
+        ref_code: refCode,
+        phone,
+        address,
+        selected_benefits: selected,
+        photo_path: photoPath,
+        photo_quality: quality
+          ? {
+              width: quality.width,
+              height: quality.height,
+              brightness: Math.round(quality.brightness),
+              sharpness: Math.round(quality.sharpness),
+              sizeKB: Math.round(quality.sizeKB),
+              score: quality.score,
+              passed: quality.passed,
+            }
+          : null,
+      });
+      if (insErr) throw insErr;
+      setStep(4);
+    } catch (e) {
+      console.error("submit failed", e);
+      toast.error("ارسال درخواست ناموفق بود. لطفاً دوباره تلاش کنید.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const canNext =
     (step === 0 && selected.length > 0) ||
@@ -558,7 +603,12 @@ function VipLanding() {
                   </div>
                 </motion.div>
               )}
-              <Nav onBack={back} onNext={next} canNext={canNext} nextLabel="ثبت نهایی درخواست" />
+              <Nav
+                onBack={back}
+                onNext={submitToBackend}
+                canNext={canNext && !submitting}
+                nextLabel={submitting ? "در حال ارسال…" : "ثبت نهایی درخواست"}
+              />
             </StepShell>
           )}
 
