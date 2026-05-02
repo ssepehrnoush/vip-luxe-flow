@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import {
   Syringe, ScanFace, Crown, MessageCircleHeart,
   Phone, MapPin, UploadCloud, Check, ArrowLeft, Sparkles, X,
-  AlertTriangle, Loader2, ImageIcon, Sun, Maximize2, Hash, CalendarClock, Info, MousePointerClick
+  AlertTriangle, Loader2, ImageIcon, Sun, Maximize2, Hash, CalendarClock, Info, MousePointerClick, User
 } from "lucide-react";
 import logo from "@/assets/lemon-logo-neon.webp";
 import { supabase } from "@/integrations/supabase/client";
@@ -69,7 +69,7 @@ const benefits = [
   },
 ];
 
-const steps = ["مزایا", "تماس", "آدرس", "تصویر", "تایید"];
+const steps = ["نام", "مزایا", "تماس", "آدرس", "تصویر", "تایید"];
 
 function VipLanding() {
   const navigate = useNavigate();
@@ -77,6 +77,7 @@ function VipLanding() {
   const [selected, setSelected] = useState<number[]>([]);
   const [justChecked, setJustChecked] = useState<number | null>(null);
   const [openBenefit, setOpenBenefit] = useState<number | null>(null);
+  const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [file, setFile] = useState<File | null>(null);
