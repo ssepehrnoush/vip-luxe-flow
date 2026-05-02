@@ -56,6 +56,7 @@ function VipLanding() {
   const [authChecking, setAuthChecking] = useState(true);
   const [existingStatus, setExistingStatus] = useState<string | null>(null);
   const [signingIn, setSigningIn] = useState(false);
+  const [phoneLogin, setPhoneLogin] = useState("");
 
   // Check session on mount, and if user already submitted -> jump to step 4
   useEffect(() => {
@@ -121,15 +122,47 @@ function VipLanding() {
     };
   }, []);
 
-  const handleGoogleSignIn = async () => {
-    setSigningIn(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) {
-      toast.error("ورود با گوگل ناموفق بود");
-      setSigningIn(false);
+  // Phone-only "login" — no OTP, no password verification.
+  // We map a phone number to a synthetic email account in Supabase.
+  // First attempt: sign in with the deterministic credentials.
+  // If the account doesn't exist, sign up with the same credentials.
+  const handlePhoneLogin = async () => {
+    const normalized = phoneLogin.replace(/\D/g, "");
+    if (normalized.length < 10 || normalized.length > 15) {
+      toast.error("شماره تلفن معتبر وارد کنید");
+      return;
     }
+    setSigningIn(true);
+    const email = `${normalized}@phone.lemon.local`;
+    // Deterministic password derived from phone — user never types it.
+    const password = `lemon-vip-${normalized}-pass-2026`;
+
+    let { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      // Account probably doesn't exist yet — create it.
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { phone: normalized } },
+      });
+      if (signUpError) {
+        toast.error("ورود ناموفق بود: " + signUpError.message);
+        setSigningIn(false);
+        return;
+      }
+      // Some projects require an explicit sign-in after signup.
+      const { error: postSignInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (postSignInError) {
+        toast.error("ورود ناموفق بود: " + postSignInError.message);
+        setSigningIn(false);
+        return;
+      }
+    }
+    // onAuthStateChange will pick this up and redirect / load data.
+    setSigningIn(false);
   };
 
   // Cinematic parallax — background layers shift on scroll
