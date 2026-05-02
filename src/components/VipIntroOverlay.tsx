@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, type PanInfo } from "framer-motion";
-import { Sparkles, ScanFace, Crown, Stethoscope } from "lucide-react";
+import iconFoxEyes from "@/assets/vv-icon-foxeyes.png";
+import iconFace from "@/assets/vv-icon-face.png";
+import iconCrown from "@/assets/vv-icon-crown.png";
+import iconChat from "@/assets/vv-icon-chat.png";
 
 type Benefit = {
   title: string;
   subtitle: string;
   tag: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: string;
 };
 
 const BENEFITS: Benefit[] = [
@@ -14,25 +17,25 @@ const BENEFITS: Benefit[] = [
     tag: "هدیه ورود",
     title: "بوتاکس VIP",
     subtitle: "طراحی نگاه روباهی (Fox Eyes) — هدیه اختصاصی عضویت",
-    icon: Sparkles,
+    icon: iconFoxEyes,
   },
   {
     tag: "تحلیل هوشمند",
     title: "آنالیز چهره",
     subtitle: "ارزیابی پوست با هوش مصنوعی و گزارش پزشکی اختصاصی",
-    icon: ScanFace,
+    icon: iconFace,
   },
   {
     tag: "عضویت طلایی",
     title: "دسترسی VIP",
     subtitle: "ورود به کلاب خصوصی لمون با خدمات و تخفیف‌های اختصاصی",
-    icon: Crown,
+    icon: iconCrown,
   },
   {
     tag: "کنسیرژ پزشکی",
     title: "ارتباط مستقیم با پزشک",
     subtitle: "خط ارتباطی شخصی و مشاوره بدون واسطه با تیم پزشکی",
-    icon: Stethoscope,
+    icon: iconChat,
   },
 ];
 
