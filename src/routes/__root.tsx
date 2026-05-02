@@ -2,6 +2,7 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 
 import appCss from "../styles.css?url";
 import VipIntroOverlay from "../components/VipIntroOverlay";
+import HighContrastToggle from "../components/HighContrastToggle";
 
 function NotFoundComponent() {
   return (
@@ -77,6 +78,7 @@ function RootComponent() {
     <>
       <Outlet />
       <VipIntroOverlay />
+      <HighContrastToggle />
     </>
   );
 }
