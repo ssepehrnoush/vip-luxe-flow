@@ -6,7 +6,7 @@ import {
   Phone, MapPin, UploadCloud, Check, ArrowLeft, Sparkles, X,
   AlertTriangle, Loader2, ImageIcon, Sun, Maximize2, Hash, CalendarClock
 } from "lucide-react";
-import logo from "@/assets/lemon-logo-neon.png";
+import logo from "@/assets/lemon-logo-neon.webp";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -37,10 +37,7 @@ function VipLanding() {
   const [preview, setPreview] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
-  const [refCode] = useState(() =>
-    "VIP-" + Math.random().toString(36).slice(2, 6).toUpperCase() +
-    "-" + Math.random().toString(36).slice(2, 6).toUpperCase()
-  );
+  const [refCode, setRefCode] = useState("VIP-XXXX-XXXX");
   const [quality, setQuality] = useState<{
     width: number; height: number; brightness: number;
     sharpness: number; sizeKB: number;
@@ -56,16 +53,30 @@ function VipLanding() {
   const blobY = useTransform(scrollY, [0, 800], [0, -60]);
   const dustY = useTransform(scrollY, [0, 800], [0, -200]);
 
-  // Pre-computed dust particles
-  const dustParticles = useRef(
-    Array.from({ length: 22 }, (_, i) => ({
-      left: Math.random() * 100,
-      size: 2 + Math.random() * 4,
-      delay: Math.random() * 14,
-      duration: 12 + Math.random() * 10,
-      opacity: 0.4 + Math.random() * 0.5,
-    })).map((p, i) => ({ ...p, key: i }))
-  ).current;
+  // Client-only dust particles (avoids SSR hydration mismatch from Math.random)
+  const [dustParticles, setDustParticles] = useState<
+    Array<{ key: number; left: number; size: number; delay: number; duration: number; opacity: number }>
+  >([]);
+
+  useEffect(() => {
+    // Generate refCode and dust particles on the client only
+    setRefCode(
+      "VIP-" +
+        Math.random().toString(36).slice(2, 6).toUpperCase() +
+        "-" +
+        Math.random().toString(36).slice(2, 6).toUpperCase(),
+    );
+    setDustParticles(
+      Array.from({ length: 12 }, (_, i) => ({
+        key: i,
+        left: Math.random() * 100,
+        size: 2 + Math.random() * 4,
+        delay: Math.random() * 14,
+        duration: 12 + Math.random() * 10,
+        opacity: 0.4 + Math.random() * 0.5,
+      })),
+    );
+  }, []);
 
   // Auto-check benefits one-by-one within ~2s (every 500ms)
   useEffect(() => {

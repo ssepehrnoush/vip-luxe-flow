@@ -153,11 +153,12 @@
       oklch(0.90 0.13 88 / 0.30) 50%,
       oklch(0.92 0.12 88 / 0.18) 65%,
       oklch(0.95 0.10 90 / 0) 100%);
-    filter: blur(48px);
+    filter: blur(28px);
     transform-origin: top center;
     mix-blend-mode: screen;
     opacity: 0.65;
     animation: beam-sway 18s ease-in-out infinite alternate;
+    will-change: transform;
   }
   .light-beam.b1 { right: -6vw; transform: rotate(14deg); }
   .light-beam.b2 { left: -10vw; transform: rotate(-22deg); animation-duration: 24s; opacity: 0.45; }
@@ -312,7 +313,7 @@
   .ambient-blob {
     position: absolute;
     border-radius: 50%;
-    filter: blur(110px);
+    filter: blur(70px);
     opacity: 0.55;
     pointer-events: none;
     will-change: transform;
@@ -426,6 +427,14 @@
         drop-shadow(0 0 32px rgba(201, 169, 106, 0.75))
         drop-shadow(0 0 52px rgba(168, 136, 74, 0.5));
     }
+  }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .dust, .light-beam, .ambient-blob, .light-streak,
+  .breathe, .neon-logo, .camera-sweep, .anim-light-sweep {
+    animation: none !important;
   }
 }
 
