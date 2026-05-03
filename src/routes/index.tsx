@@ -69,7 +69,7 @@ const benefits = [
   },
 ];
 
-const steps = ["نام", "مزایا", "تماس", "آدرس", "تصویر", "تایید"];
+const steps = ["مزایا", "آدرس", "تصویر", "تایید"];
 
 function VipLanding() {
   const navigate = useNavigate();
