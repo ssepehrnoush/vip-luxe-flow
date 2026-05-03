@@ -14,7 +14,7 @@ type Benefit = {
 
 const BENEFITS: Benefit[] = [
   {
-    tag: "هدیه عضویت شما",
+    tag: "🎁 هدیه به شما — رایگان",
     title: "یک دوز کامل بوتاکس",
     subtitle: "FOX EYE / CAT EYE",
     icon: iconFoxEyes,
