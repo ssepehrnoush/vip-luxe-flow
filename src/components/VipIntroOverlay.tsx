@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, type PanInfo } from "framer-motion";
 import iconFoxEyes from "@/assets/vv-icon-foxeyes.webp";
 import iconFace from "@/assets/vv-icon-face.webp";
-import iconCrown from "@/assets/vv-icon-crown.webp";
+import iconFacial from "@/assets/vv-icon-facial.png";
 import iconChat from "@/assets/vv-icon-chat.webp";
 
 type Benefit = {
@@ -26,10 +26,10 @@ const BENEFITS: Benefit[] = [
     icon: iconFace,
   },
   {
-    tag: "ارتقای رایگان جلسات",
-    title: "فیشال + خدمات ویژه",
-    subtitle: "در هر جلسه فیشال، از خدمات تکمیلی و اختصاصی بدون هزینه اضافی بهره‌مند می‌شوید",
-    icon: iconCrown,
+    tag: "تجربه فراتر از فیشال",
+    title: "مراقبت بی‌حد و مرز",
+    subtitle: "در هر جلسه فیشال، خدمات لوکس و اضافی بدون پرداخت هزینه به شما تقدیم می‌شود",
+    icon: iconFacial,
   },
   {
     tag: "کنسیرژ پزشکی",
