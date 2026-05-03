@@ -122,7 +122,7 @@ function VipLanding() {
     const loadForUser = async (uid: string) => {
       const { data } = await supabase
         .from("vip_submissions")
-        .select("ref_code, full_name, phone, address, selected_benefits, status")
+        .select("ref_code, full_name, phone, address, selected_benefits, status, photo_path")
         .eq("user_id", uid)
         .order("created_at", { ascending: false })
         .limit(1)
@@ -135,6 +135,12 @@ function VipLanding() {
         setAddress(data.address);
         setSelected(data.selected_benefits ?? []);
         setExistingStatus(data.status);
+        if (data.photo_path) {
+          const { data: signed } = await supabase.storage
+            .from("vip-photos")
+            .createSignedUrl(data.photo_path, 60 * 60);
+          if (signed?.signedUrl && mounted) setPreview(signed.signedUrl);
+        }
         setStep(5);
       }
     };
