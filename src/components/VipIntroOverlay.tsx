@@ -26,9 +26,9 @@ const BENEFITS: Benefit[] = [
     icon: iconFace,
   },
   {
-    tag: "عضویت طلایی",
-    title: "دسترسی VIP",
-    subtitle: "ورود به کلاب خصوصی لمون با خدمات و تخفیف‌های اختصاصی",
+    tag: "ارتقای رایگان جلسات",
+    title: "فیشال + خدمات ویژه",
+    subtitle: "در هر جلسه فیشال، از خدمات تکمیلی و اختصاصی بدون هزینه اضافی بهره‌مند می‌شوید",
     icon: iconCrown,
   },
   {
@@ -423,7 +423,7 @@ export default function VipIntroOverlay() {
               مراسم پذیرش شما
             </h2>
             <p className="text-xs mt-1" style={{ color: "oklch(0.85 0.03 80 / 0.85)" }}>
-              برای ورود، کارت ها را ورق بزنید
+              مزایای اختصاصی عضویت در کلاب VIP لمون
             </p>
           </motion.div>
 
