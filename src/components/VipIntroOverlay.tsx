@@ -143,8 +143,15 @@ function SwipeCard({
         />
 
         <div className="relative h-full w-full flex flex-col items-center justify-between p-7 text-center">
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full glass-input text-[11px] tracking-wide text-[var(--gold-deep)]">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--gold)]" />
+          <div
+            className="flex items-center gap-2 px-4 py-1.5 rounded-full text-[13px] font-bold tracking-wide"
+            style={{
+              background: "var(--gradient-gold)",
+              color: "oklch(0.22 0.015 60)",
+              boxShadow: "0 6px 18px -4px rgba(168,136,74,0.55), inset 0 1px 0 rgba(255,248,230,0.7)",
+            }}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[oklch(0.22_0.015_60)]" />
             {benefit.tag}
           </div>
 
