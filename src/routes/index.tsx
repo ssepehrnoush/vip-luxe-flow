@@ -131,7 +131,7 @@ function VipLanding() {
       if (data) {
         setRefCode(data.ref_code);
         if (data.full_name) setFullName(data.full_name);
-        setPhone(data.phone);
+        if (data.phone) setPhone(data.phone);
         setAddress(data.address);
         setSelected(data.selected_benefits ?? []);
         setExistingStatus(data.status);
@@ -141,7 +141,7 @@ function VipLanding() {
             .createSignedUrl(data.photo_path, 60 * 60);
           if (signed?.signedUrl && mounted) setPreview(signed.signedUrl);
         }
-        setStep(5);
+        setStep(3);
       }
     };
 
