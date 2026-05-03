@@ -385,7 +385,7 @@ function VipLanding() {
     setAnalyzing(false);
   };
 
-  const next = () => setStep((s) => Math.min(s + 1, 5));
+  const next = () => setStep((s) => Math.min(s + 1, 3));
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
   const submitToBackend = async () => {
