@@ -272,9 +272,13 @@ export default function VipIntroOverlay() {
   const [closing, setClosing] = useState(false);
   const [authed, setAuthed] = useState<boolean | null>(null);
 
-  // Only show the intro for signed-in users (skip on the login gate)
+  // Show the intro only for unauthenticated visitors, before the login gate.
+  // Once shown (and dismissed via swipe), do not bring it back for the rest of the session.
   useEffect(() => {
     let mounted = true;
+    if (typeof window !== "undefined" && sessionStorage.getItem("vip-intro-seen")) {
+      return;
+    }
     import("@/integrations/supabase/client").then(({ supabase }) => {
       supabase.auth.getSession().then(({ data }) => {
         if (!mounted) return;
@@ -291,11 +295,12 @@ export default function VipIntroOverlay() {
   }, []);
 
   useEffect(() => {
-    if (!authed) return;
+    if (authed === null || authed === true) return; // wait for check, only show for guests
+    if (typeof window !== "undefined" && sessionStorage.getItem("vip-intro-seen")) return;
     const t = setTimeout(() => {
       setVisible(true);
       setShown(true);
-    }, 1000);
+    }, 600);
     return () => clearTimeout(t);
   }, [authed]);
 
@@ -317,7 +322,12 @@ export default function VipIntroOverlay() {
       setTimeout(() => setFlying(null), 700);
       if (rest.length === 0) {
         setClosing(true);
-        setTimeout(() => setVisible(false), 1100);
+        setTimeout(() => {
+          setVisible(false);
+          if (typeof window !== "undefined") {
+            sessionStorage.setItem("vip-intro-seen", "1");
+          }
+        }, 1100);
       }
       return rest;
     });

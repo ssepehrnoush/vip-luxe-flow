@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import {
   Syringe, ScanFace, Crown, MessageCircleHeart,
   Phone, MapPin, UploadCloud, Check, ArrowLeft, Sparkles, X,
-  AlertTriangle, Loader2, ImageIcon, Sun, Maximize2, Hash, CalendarClock, Info, MousePointerClick, User
+  AlertTriangle, Loader2, ImageIcon, Sun, Maximize2, Hash, CalendarClock, Info, MousePointerClick
 } from "lucide-react";
 import logo from "@/assets/lemon-logo-neon.webp";
 import { supabase } from "@/integrations/supabase/client";
@@ -69,7 +69,7 @@ const benefits = [
   },
 ];
 
-const steps = ["نام", "مزایا", "تماس", "آدرس", "تصویر", "تایید"];
+const steps = ["مزایا", "آدرس", "تصویر", "تایید"];
 
 function VipLanding() {
   const navigate = useNavigate();
@@ -131,7 +131,7 @@ function VipLanding() {
       if (data) {
         setRefCode(data.ref_code);
         if (data.full_name) setFullName(data.full_name);
-        setPhone(data.phone);
+        if (data.phone) setPhone(data.phone);
         setAddress(data.address);
         setSelected(data.selected_benefits ?? []);
         setExistingStatus(data.status);
@@ -141,7 +141,7 @@ function VipLanding() {
             .createSignedUrl(data.photo_path, 60 * 60);
           if (signed?.signedUrl && mounted) setPreview(signed.signedUrl);
         }
-        setStep(5);
+        setStep(3);
       }
     };
 
@@ -385,7 +385,7 @@ function VipLanding() {
     setAnalyzing(false);
   };
 
-  const next = () => setStep((s) => Math.min(s + 1, 5));
+  const next = () => setStep((s) => Math.min(s + 1, 3));
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
   const submitToBackend = async () => {
@@ -410,7 +410,7 @@ function VipLanding() {
         user_id: userId,
         ref_code: refCode,
         full_name: fullName.trim(),
-        phone,
+        phone: phone || null,
         address,
         selected_benefits: selected,
         photo_path: photoPath,
@@ -428,7 +428,7 @@ function VipLanding() {
       });
       if (insErr) throw insErr;
       setExistingStatus("new");
-      setStep(5);
+      setStep(3);
     } catch (e) {
       console.error("submit failed", e);
       toast.error("ارسال درخواست ناموفق بود. لطفاً دوباره تلاش کنید.");
@@ -437,14 +437,10 @@ function VipLanding() {
     }
   };
 
-  const nameParts = fullName.trim().split(/\s+/).filter((p) => p.length >= 2);
-  const nameOk = nameParts.length >= 2;
   const canNext =
-    (step === 0 && nameOk) ||
-    (step === 1 && selected.length > 0) ||
-    (step === 2 && /^09\d{9}$/.test(phone)) ||
-    (step === 3 && address.trim().length > 8) ||
-    (step === 4 && !!file && !analyzing && !!quality?.passed);
+    (step === 0 && selected.length > 0) ||
+    (step === 1 && address.trim().length > 8) ||
+    (step === 2 && !!file && !analyzing && !!quality?.passed);
 
   return (
     <main className="relative min-h-screen overflow-hidden">
@@ -528,7 +524,7 @@ function VipLanding() {
         </div>
 
         <AnimatePresence mode="wait">
-          {!authChecking && !userId && step < 5 && (
+          {!authChecking && !userId && step < 3 && (
             <motion.section
               key="signin-gate"
               initial={{ opacity: 0, y: 20 }}
@@ -634,19 +630,6 @@ function VipLanding() {
           )}
 
           {!authChecking && userId && step === 0 && (
-            <StepShell key="name" title="نام و نام خانوادگی شما" subtitle="برای ثبت پرونده اختصاصی در کلاب VIP">
-              <FloatingInput
-                icon={<User className="w-5 h-5" />}
-                label="نام و نام خانوادگی"
-                value={fullName}
-                onChange={setFullName}
-                placeholder="مثلاً سارا محمدی"
-              />
-              <Nav onBack={back} onNext={next} canNext={canNext} backDisabled />
-            </StepShell>
-          )}
-
-          {!authChecking && userId && step === 1 && (
             <motion.section
               key="hero"
               initial={{ opacity: 0, y: 20 }}
@@ -890,22 +873,7 @@ function VipLanding() {
             </motion.section>
           )}
 
-          {step === 2 && (
-            <StepShell key="phone" title="شماره تماس خود را وارد کنید" subtitle="جهت هماهنگی توسط منشی اختصاصی">
-              <FloatingInput
-                icon={<Phone className="w-5 h-5" />}
-                label="شماره موبایل"
-                value={phone}
-                onChange={setPhone}
-                type="tel"
-                placeholder="09xxxxxxxxx"
-                dir="ltr"
-              />
-              <Nav onBack={back} onNext={next} canNext={canNext} />
-            </StepShell>
-          )}
-
-          {step === 3 && (
+          {step === 1 && (
             <StepShell key="addr" title="آدرس خود را وارد کنید" subtitle="برای ارسال هدیه و دعوتنامه اختصاصی">
               <FloatingInput
                 icon={<MapPin className="w-5 h-5" />}
@@ -919,7 +887,7 @@ function VipLanding() {
             </StepShell>
           )}
 
-          {step === 4 && (
+          {step === 2 && (
             <StepShell key="img" title="ارسال تصویر صورت" subtitle="ترجیحاً بدون میکاپ سنگین، به‌صورت واضح و طبیعی">
               <input
                 ref={inputRef}
@@ -1079,7 +1047,7 @@ function VipLanding() {
             </StepShell>
           )}
 
-          {step === 5 && (
+          {step === 3 && (
             <SuccessScreen
               refCode={refCode}
               fullName={fullName}
