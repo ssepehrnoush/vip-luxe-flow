@@ -42,7 +42,7 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
-          phone: string
+          phone: string | null
           photo_path: string | null
           photo_quality: Json | null
           ref_code: string
@@ -57,7 +57,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
-          phone: string
+          phone?: string | null
           photo_path?: string | null
           photo_quality?: Json | null
           ref_code: string
@@ -72,7 +72,7 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
-          phone?: string
+          phone?: string | null
           photo_path?: string | null
           photo_quality?: Json | null
           ref_code?: string
